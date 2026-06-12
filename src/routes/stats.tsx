@@ -507,21 +507,24 @@ function Stats() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-              <div className="flex-1 lg:flex-initial flex items-center justify-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
-                <span className="font-display text-lg text-ink font-medium leading-none">{levelAttempted}</span>
-                <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider ml-1.5 leading-none">/ {activeQuestions.length} Attempted</span>
+              <div className="flex items-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+                <span className="font-display text-lg text-ink font-medium leading-none">
+                  {levelAttempted}
+                  <span className="text-xs text-muted-soft font-sans ml-0.5">/{activeQuestions.length}</span>
+                </span>
+                <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider ml-1.5 leading-none whitespace-nowrap">Attempted</span>
               </div>
-              <div className="flex-1 lg:flex-initial flex items-center justify-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+              <div className="flex items-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
                 <span className="font-display text-lg text-success font-medium leading-none">{levelPassed}</span>
-                <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider ml-1.5 leading-none">Passed</span>
+                <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider ml-1.5 leading-none whitespace-nowrap">Passed</span>
               </div>
-              <div className="flex-1 lg:flex-initial flex items-center justify-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+              <div className="flex items-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
                 {completedLevels.includes(activeTab) ? (
-                  <span className="inline-flex items-center gap-1 text-success text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none">
+                  <span className="inline-flex items-center gap-1 text-success text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none whitespace-nowrap">
                     <Check size={12} className="stroke-[3]" /> Complete
                   </span>
                 ) : (
-                  <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none">In progress</span>
+                  <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none whitespace-nowrap">In progress</span>
                 )}
               </div>
             </div>

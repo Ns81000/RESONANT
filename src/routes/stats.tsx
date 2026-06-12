@@ -263,15 +263,15 @@ function Stats() {
     [activeResults],
   );
 
-  const currentLevelCompleted = useMemo(() => {
-    if (!level || !completedLevels.includes(level)) return false;
-    const activeResults = getResultsForLevel(level);
-    const questions = questionsForLevel(level);
+  const activeTabCompleted = useMemo(() => {
+    if (!completedLevels.includes(activeTab)) return false;
+    const activeResults = getResultsForLevel(activeTab);
+    const questions = questionsForLevel(activeTab);
     return questions.every((q) => {
       const r = activeResults.find((res) => res.questionId === q.id);
       return r && r.passed;
     });
-  }, [level, completedLevels, getResultsForLevel]);
+  }, [activeTab, completedLevels, getResultsForLevel]);
 
   const allLevelsCompleted = useMemo(() => {
     if (completedLevels.length < 3) return false;
@@ -286,37 +286,35 @@ function Stats() {
   }, [completedLevels, getResultsForLevel]);
 
   const nextLevelToPractice = useMemo(() => {
-    if (!level) return null;
-    if (!currentLevelCompleted) return level;
-    const currentIndex = LEVELS.indexOf(level);
+    if (!activeTabCompleted) return activeTab;
+    const currentIndex = LEVELS.indexOf(activeTab);
     if (currentIndex !== -1 && currentIndex + 1 < LEVELS.length) {
       return LEVELS[currentIndex + 1] as Level;
     }
     return null;
-  }, [level, currentLevelCompleted]);
+  }, [activeTab, activeTabCompleted]);
 
   const handleCTA = () => {
     if (allLevelsCompleted) {
       navigate({ to: "/" });
     } else if (nextLevelToPractice) {
-      if (nextLevelToPractice !== level) {
-        useSession.getState().setLevel(nextLevelToPractice);
+      useSession.getState().setLevel(nextLevelToPractice);
+      
+      if (nextLevelToPractice !== activeTab) {
         navigate({ to: "/level-intro" });
       } else {
-        if (level) {
-          const activeQuestions = questionsForLevel(level);
-          const activeResults = getResultsForLevel(level);
-          const allQuestionsHaveResult = activeQuestions.every((qItem) =>
-            activeResults.some((r) => r.questionId === qItem.id)
-          );
-          if (allQuestionsHaveResult) {
-            const firstIncomplete = activeQuestions.findIndex((qItem) => {
-              const r = activeResults.find((res) => res.questionId === qItem.id);
-              return !r || !r.passed;
-            });
-            if (firstIncomplete !== -1) {
-              useSession.getState().setCurrentQuestion(firstIncomplete);
-            }
+        const activeQuestions = questionsForLevel(activeTab);
+        const activeResults = getResultsForLevel(activeTab);
+        const allQuestionsHaveResult = activeQuestions.every((qItem) =>
+          activeResults.some((r) => r.questionId === qItem.id)
+        );
+        if (allQuestionsHaveResult) {
+          const firstIncomplete = activeQuestions.findIndex((qItem) => {
+            const r = activeResults.find((res) => res.questionId === qItem.id);
+            return !r || !r.passed;
+          });
+          if (firstIncomplete !== -1) {
+            useSession.getState().setCurrentQuestion(firstIncomplete);
           }
         }
         navigate({ to: "/practice" });
@@ -329,13 +327,13 @@ function Stats() {
   const ctaText = useMemo(() => {
     if (allLevelsCompleted) return "Back to home";
     if (nextLevelToPractice) {
-      if (nextLevelToPractice !== level) {
+      if (nextLevelToPractice !== activeTab) {
         return `Continue to ${LEVEL_INFO[nextLevelToPractice].title}`;
       }
       return "Continue practicing";
     }
     return "Start practicing";
-  }, [allLevelsCompleted, nextLevelToPractice, level]);
+  }, [allLevelsCompleted, nextLevelToPractice, activeTab]);
 
   // GSAP: Entry animation
   useEffect(() => {

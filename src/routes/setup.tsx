@@ -111,10 +111,10 @@ function Setup() {
             </div>
           ) : (
             <div className="py-4 md:py-0 relative">
-              <div className="md:relative absolute -top-12 md:-top-0 left-0">
+              <div className="mb-6 md:mb-10">
                 <button
                   onClick={() => setStep(1)}
-                  className="setup-rise mb-6 md:mb-10 btn-nav"
+                  className="setup-rise btn-nav"
                   aria-label="Back to previous step"
                 >
                   <ArrowLeft size={16} /> Back
@@ -143,18 +143,20 @@ function Setup() {
                           : "border-hairline bg-canvas hover:border-ink/30 hover:-translate-y-0.5"
                       }`}
                     >
-                      {isCompleted && (
-                        <span className="absolute top-4 right-4 inline-flex items-center gap-1 text-[10px] caption-up text-success">
-                          <Check size={12} /> done
-                        </span>
-                      )}
                       <div className="flex items-start justify-between mb-4 md:mb-5">
                         <span
                           className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${isSelected ? "bg-primary text-on-primary" : "bg-surface-card text-primary"}`}
                         >
                           <Icon size={20} />
                         </span>
-                        <span className="caption-up text-muted-tone">Level 0{i + 1}</span>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="caption-up text-muted-tone">Level 0{i + 1}</span>
+                          {isCompleted && (
+                            <span className="inline-flex items-center gap-1 text-[10px] caption-up text-success font-semibold">
+                              <Check size={11} className="stroke-[3]" /> done
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="display-sm text-ink mb-1.5 md:mb-2">{LEVEL_INFO[lvl].title}</div>
                       <div className="text-sm text-body leading-relaxed mb-3 md:mb-4">

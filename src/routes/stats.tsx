@@ -352,15 +352,6 @@ function Stats() {
           <span dangerouslySetInnerHTML={{ __html: logoSvg("#141413", "#cc785c") }} />
           <span className="font-display text-xl font-medium tracking-tight text-ink">Resonant</span>
         </Link>
-        <button
-          onClick={() => {
-            const allCompleted = completedLevels.length === 3;
-            navigate({ to: (level && !allCompleted) ? "/level-intro" : "/" });
-          }}
-          className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-hairline bg-white hover:bg-surface-soft shadow-sm uppercase tracking-wider font-semibold"
-        >
-          <ArrowLeft size={12} /> Back
-        </button>
       </header>
 
       <main className="px-4 md:px-12 py-8 md:py-16 max-w-7xl mx-auto space-y-6 md:space-y-8">

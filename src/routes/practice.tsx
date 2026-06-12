@@ -274,11 +274,11 @@ function Practice() {
 
       <main
         ref={stageRef}
-        className="flex-1 px-6 md:px-12 py-8 md:py-12 flex flex-col items-center relative"
+        className="flex-1 px-6 md:px-12 pt-16 pb-8 md:py-12 flex flex-col items-center relative overflow-y-auto overflow-x-hidden"
       >
         {/* Top Actions Row */}
         {stage !== "PROCESSING" && (
-          <div className="w-full max-w-3xl flex items-center justify-between mb-6 md:mb-0 md:absolute md:top-6 md:left-0 md:right-0 md:px-12 md:max-w-none pointer-events-none">
+          <div className="w-full max-w-3xl flex items-center justify-between absolute top-6 left-0 right-0 px-6 md:px-12 md:max-w-none pointer-events-none z-10">
             {/* Left side: Back/Prev navigation */}
             <div className="pointer-events-auto">
               {(stage !== "RECORDING" || (stage === "RECORDING" && recordingState === "idle")) ? (
@@ -357,7 +357,7 @@ function Practice() {
         )}
 
         {/* Content Wrapper */}
-        <div className="w-full max-w-3xl my-auto py-4">
+        <div className="w-full max-w-3xl mt-4 md:my-auto py-4">
           {stage === "PROMPT" && (
             <div className="text-center">
               <div className="stage-in caption-up text-muted-tone mb-6">{q.category}</div>

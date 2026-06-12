@@ -101,7 +101,7 @@ function Complete() {
   return (
     <div
       ref={ref}
-      className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center justify-center px-6 py-12 text-center relative overflow-hidden"
+      className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center px-6 py-12 text-center relative overflow-y-auto overflow-x-hidden"
     >
       {/* Particles (only show if not skipped all) */}
       {!allSkipped && (
@@ -116,7 +116,7 @@ function Complete() {
         </div>
       )}
 
-      <div className="relative max-w-2xl">
+      <div className="relative max-w-2xl my-auto py-8">
         <div className="cele caption-up text-on-dark-soft mb-6">
           {allSkipped ? "Practice Incomplete" : "Level complete"}
         </div>
@@ -140,7 +140,7 @@ function Complete() {
         )}
 
         {!allSkipped && (
-          <div className="cele flex items-center justify-center gap-4 sm:gap-6 mb-10 md:mb-14 flex-wrap">
+          <div className="cele flex items-center justify-center gap-4 sm:gap-6 mb-12 md:mb-16 flex-wrap">
             <ScoreDial value={averages.clarity} label="Clarity" size={96} />
             <ScoreDial value={averages.grammar} label="Grammar" size={96} />
             <ScoreDial value={averages.confidence} label="Confidence" size={96} />

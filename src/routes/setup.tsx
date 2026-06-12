@@ -81,7 +81,7 @@ function Setup() {
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
       <Nav />
-      <main ref={containerRef} className="flex-1 flex flex-col items-center px-6 pt-24 pb-12 md:py-32">
+      <main ref={containerRef} className="flex-1 flex flex-col items-center px-6 pt-24 pb-8 md:pt-32 md:pb-12">
         <div className="w-full max-w-4xl my-auto">
           {step === 1 ? (
             <div className="text-center py-4">
@@ -110,23 +110,25 @@ function Setup() {
               </div>
             </div>
           ) : (
-            <div className="py-4">
-              <button
-                onClick={() => setStep(1)}
-                className="setup-rise mb-6 btn-nav"
-                aria-label="Back to previous step"
-              >
-                <ArrowLeft size={12} /> Back
-              </button>
-              <div className="setup-rise caption-up text-muted-tone mb-4 mt-2">Step 02</div>
+            <div className="py-4 md:py-0 relative">
+              <div className="md:relative absolute -top-12 md:-top-0 left-0">
+                <button
+                  onClick={() => setStep(1)}
+                  className="setup-rise mb-6 md:mb-10 btn-nav"
+                  aria-label="Back to previous step"
+                >
+                  <ArrowLeft size={16} /> Back
+                </button>
+              </div>
+              <div className="setup-rise caption-up text-muted-tone mb-4">Step 02</div>
               <h1 className="setup-rise display-lg text-ink mb-3 max-w-3xl">
                 Welcome, {useSession.getState().userName || "friend"}.
               </h1>
-              <p className="setup-rise text-body mb-8 md:mb-12 text-lg">
+              <p className="setup-rise text-body mb-8 md:mb-10 text-lg">
                 Choose where you are today. You can always change later.
               </p>
 
-              <div className="setup-rise grid md:grid-cols-3 gap-4 mb-8 md:mb-10">
+              <div className="setup-rise grid md:grid-cols-3 gap-4 md:gap-6 mb-10 md:mb-12">
                 {(["beginner", "intermediate", "advanced"] as Level[]).map((lvl, i) => {
                   const Icon = LEVEL_ICONS[lvl];
                   const isSelected = selected === lvl;

@@ -56,7 +56,7 @@ function LevelIntro() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center px-6 pt-24 pb-12 md:py-12 text-center relative overflow-hidden"
+      className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center px-6 pt-12 pb-12 md:py-12 text-center relative overflow-hidden"
     >
       <div className="absolute inset-0 pointer-events-none">
         <div

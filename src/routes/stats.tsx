@@ -11,7 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useSession } from "@/lib/resonant/store";
-import { LEVEL_INFO, questionsForLevel } from "@/lib/resonant/questions";
+import { LEVEL_INFO, questionsForLevel, QUESTIONS } from "@/lib/resonant/questions";
 import type { Level, QuestionResult } from "@/lib/resonant/types";
 import logoSvg from "@/components/resonant/logo";
 
@@ -342,7 +342,7 @@ function Stats() {
   if (hydrated && !userName) return <Navigate to="/" />;
   if (!hydrated) return <div className="min-h-screen bg-canvas" />;
 
-  const totalQuestions = 30;
+  const totalQuestions = QUESTIONS.length;
 
   return (
     <div ref={containerRef} className="min-h-screen bg-canvas text-ink">
@@ -353,7 +353,10 @@ function Stats() {
           <span className="font-display text-xl font-medium tracking-tight text-ink">Resonant</span>
         </Link>
         <button
-          onClick={() => navigate({ to: level ? "/level-intro" : "/" })}
+          onClick={() => {
+            const allCompleted = completedLevels.length === 3;
+            navigate({ to: (level && !allCompleted) ? "/level-intro" : "/" });
+          }}
           className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-4 py-2 rounded-full border border-hairline bg-white hover:bg-surface-soft shadow-sm uppercase tracking-wider font-semibold"
         >
           <ArrowLeft size={12} /> Back
@@ -504,21 +507,21 @@ function Stats() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 text-xs font-medium text-body">
-              <div className="px-3 py-1.5 rounded-lg bg-surface-soft border border-hairline-soft">
-                <span className="font-display text-lg text-ink font-medium">{levelAttempted}</span>
-                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1">/ 10 Attempted</span>
+              <div className="flex items-center h-9 px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+                <span className="font-display text-lg text-ink font-medium leading-none">{levelAttempted}</span>
+                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1.5 leading-none">/ {activeQuestions.length} Attempted</span>
               </div>
-              <div className="px-3 py-1.5 rounded-lg bg-surface-soft border border-hairline-soft">
-                <span className="font-display text-lg text-success font-medium">{levelPassed}</span>
-                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1">Passed</span>
+              <div className="flex items-center h-9 px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+                <span className="font-display text-lg text-success font-medium leading-none">{levelPassed}</span>
+                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1.5 leading-none">Passed</span>
               </div>
-              <div className="px-3 py-1.5 rounded-lg bg-surface-soft border border-hairline-soft">
+              <div className="flex items-center h-9 px-3 rounded-lg bg-surface-soft border border-hairline-soft">
                 {completedLevels.includes(activeTab) ? (
-                  <span className="inline-flex items-center gap-1 text-success text-[11px] uppercase tracking-wider font-semibold">
+                  <span className="inline-flex items-center gap-1 text-success text-[11px] uppercase tracking-wider font-semibold leading-none">
                     <Check size={12} className="stroke-[3]" /> Complete
                   </span>
                 ) : (
-                  <span className="text-muted-tone text-[11px] uppercase tracking-wider font-semibold">In progress</span>
+                  <span className="text-muted-tone text-[11px] uppercase tracking-wider font-semibold leading-none">In progress</span>
                 )}
               </div>
             </div>

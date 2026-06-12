@@ -1,6 +1,6 @@
-import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Check, X, SkipForward, BarChart2 } from "lucide-react";
+import { ArrowRight, Check, X, SkipForward, BarChart2, ArrowLeft } from "lucide-react";
 import { useSession } from "@/lib/resonant/store";
 import { LEVEL_INFO, questionsForLevel } from "@/lib/resonant/questions";
 import { ScoreDial } from "@/components/resonant/ScoreDial";
@@ -31,6 +31,9 @@ function Complete() {
   const allAttempted = attempted.length === totalQuestions;
   const allPassed = passed.length === totalQuestions;
   const noneAttempted = attempted.length === 0;
+  const allQuestionsHaveResult = useMemo(() => {
+    return questions.every((qItem) => results.some((r) => r.questionId === qItem.id));
+  }, [questions, results]);
 
   const averages = useMemo(() => {
     if (!attempted.length) return { clarity: 0, grammar: 0, confidence: 0 };
@@ -132,6 +135,15 @@ function Complete() {
       ref={ref}
       className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center px-6 py-12 text-center relative overflow-y-auto overflow-x-hidden"
     >
+      {/* Top Actions Row */}
+      <div className="w-full max-w-2xl md:max-w-none flex items-center justify-start mb-6 md:absolute md:top-8 md:left-0 md:right-0 md:px-12 md:mb-0 z-50">
+        <Link
+          to="/"
+          className="text-xs text-on-dark-soft hover:text-on-dark transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold"
+        >
+          <ArrowLeft size={12} /> Back to home
+        </Link>
+      </div>
       {!noneAttempted && (
         <div className="absolute top-1/2 left-1/2">
           {Array.from({ length: 30 }).map((_, i) => (
@@ -241,23 +253,51 @@ function Complete() {
                 Back to home
               </button>
             </>
-          ) : nextLevel && allAttempted ? (
+          ) : allQuestionsHaveResult ? (
             <>
-              <button
-                onClick={handleNextLevel}
-                className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center"
-              >
-                Continue to {LEVEL_INFO[nextLevel].title}
-                <ArrowRight size={18} className="ml-2" />
-              </button>
-              <button
-                onClick={handlePracticeAgain}
-                className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
-              >
-                Practice this level again
-              </button>
+              {nextLevel ? (
+                <button
+                  onClick={handleNextLevel}
+                  className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center"
+                >
+                  Continue to {LEVEL_INFO[nextLevel].title}
+                  <ArrowRight size={18} className="ml-2" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate({ to: "/" })}
+                  className="btn-primary !h-14 !px-8 w-full sm:w-auto justify-center"
+                >
+                  Back to home <ArrowRight size={18} className="ml-2" />
+                </button>
+              )}
+              
+              {!allAttempted ? (
+                <button
+                  onClick={() => {
+                    const firstIncomplete = questions.findIndex((qItem) => {
+                      const r = results.find((res) => res.questionId === qItem.id);
+                      return !r || r.skipped || r.attempts === 0;
+                    });
+                    if (firstIncomplete !== -1) {
+                      useSession.getState().setCurrentQuestion(firstIncomplete);
+                    }
+                    navigate({ to: "/practice" });
+                  }}
+                  className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
+                >
+                  Continue practicing
+                </button>
+              ) : (
+                <button
+                  onClick={handlePracticeAgain}
+                  className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
+                >
+                  Practice this level again
+                </button>
+              )}
             </>
-          ) : !allAttempted ? (
+          ) : (
             <>
               <button
                 onClick={() => {
@@ -279,21 +319,6 @@ function Complete() {
                 className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
               >
                 Restart level
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => navigate({ to: "/" })}
-                className="btn-primary !h-14 !px-8 w-full sm:w-auto justify-center"
-              >
-                Back to home <ArrowRight size={18} className="ml-2" />
-              </button>
-              <button
-                onClick={handlePracticeAgain}
-                className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
-              >
-                Practice this level again
               </button>
             </>
           )}

@@ -205,11 +205,11 @@ function Practice() {
     setMode(null);
     if (currentQuestion + 1 >= totalQuestions) {
       const currentResults = useSession.getState().results;
-      const allAttempted =
-        currentResults.length >= totalQuestions &&
-        currentResults.every((r) => !r.skipped && r.attempts > 0);
+      const allFinished = questions.every((qItem) =>
+        currentResults.some((r) => r.questionId === qItem.id)
+      );
 
-      if (allAttempted) {
+      if (allFinished) {
         completeLevel(level);
       }
       navigate({ to: "/complete" });

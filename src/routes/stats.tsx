@@ -537,21 +537,32 @@ function Stats() {
 
                 let statusColor = "bg-white";
                 let borderColor = "border-hairline";
-                let contentOpacity = "opacity-100";
+                
+                // High-contrast text colors without using container opacity filters
+                let labelColor = "text-muted-soft";
+                let categoryColor = "text-body";
+                let statusTextColor = "text-muted-soft";
+
                 if (isPassed) {
                   statusColor = "bg-success/5";
                   borderColor = "border-success/50";
+                  labelColor = "text-muted-tone";
+                  categoryColor = "text-ink";
                 } else if (isFailed) {
                   statusColor = "bg-accent-amber/5";
                   borderColor = "border-accent-amber/50";
+                  labelColor = "text-muted-tone";
+                  categoryColor = "text-ink";
                 } else if (isSkipped) {
                   statusColor = "bg-surface-soft/30";
                   borderColor = "border-dashed border-muted-soft/60";
-                  contentOpacity = "opacity-75";
+                  labelColor = "text-muted-soft";
+                  categoryColor = "text-body";
                 } else {
                   statusColor = "bg-white";
                   borderColor = "border-hairline";
-                  contentOpacity = "opacity-60";
+                  labelColor = "text-muted-soft";
+                  categoryColor = "text-body";
                 }
 
                 const avgScore = hasResult
@@ -563,57 +574,55 @@ function Stats() {
                     key={qItem.id}
                     className={`q-card relative p-4 rounded-xl transition-colors duration-200 hover:scale-[1.02] border ${statusColor} ${borderColor}`}
                   >
-                    <div className={contentOpacity}>
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="caption-up text-[11px] text-muted-tone">Q{i + 1}</span>
-                        {isPassed ? (
-                          <div className="w-5 h-5 rounded-full flex items-center justify-center bg-success/10">
-                            <Check size={11} className="text-success stroke-[3]" />
-                          </div>
-                        ) : isFailed ? (
-                          <div className="w-5 h-5 rounded-full flex items-center justify-center bg-accent-amber/10">
-                            <X size={11} className="text-accent-amber stroke-[3]" />
-                          </div>
-                        ) : isSkipped ? (
-                          <div className="w-5 h-5 rounded-full flex items-center justify-center bg-surface-soft">
-                            <SkipForward size={9} className="text-muted-soft opacity-60" />
-                          </div>
-                        ) : (
-                          <div className="w-5 h-5 rounded-full bg-surface-soft" />
-                        )}
-                      </div>
-
-                      {/* Category */}
-                      <p className="text-sm text-ink font-semibold mb-1 truncate">{qItem.category}</p>
-
-                      {/* Score or status */}
-                      {avgScore ? (
-                        <div className="flex items-baseline gap-0.5">
-                          <span
-                            className="font-display text-2xl font-medium"
-                            style={{
-                              color: isPassed ? "var(--success)" : "var(--accent-amber)",
-                              letterSpacing: "-0.02em",
-                            }}
-                          >
-                            {avgScore}
-                          </span>
-                          <span className="text-[11px] text-muted-soft">/10</span>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`caption-up text-[11px] ${labelColor}`}>Q{i + 1}</span>
+                      {isPassed ? (
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-success/10">
+                          <Check size={11} className="text-success stroke-[3]" />
+                        </div>
+                      ) : isFailed ? (
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-accent-amber/10">
+                          <X size={11} className="text-accent-amber stroke-[3]" />
                         </div>
                       ) : isSkipped ? (
-                        <span className="text-xs text-muted-soft italic">Skipped</span>
-                      ) : (
-                        <span className="text-xs text-muted-soft">Not started</span>
-                      )}
-
-                      {/* Attempt count */}
-                      {hasResult && (
-                        <div className="mt-2 text-[11px] text-muted-soft font-medium">
-                          {result.attempts} attempt{result.attempts !== 1 ? "s" : ""}
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-surface-soft">
+                          <SkipForward size={9} className="text-muted-soft opacity-60" />
                         </div>
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-surface-soft" />
                       )}
                     </div>
+
+                    {/* Category (Not bolded, font-medium) */}
+                    <p className={`text-sm ${categoryColor} font-medium mb-1 truncate`}>{qItem.category}</p>
+
+                    {/* Score or status */}
+                    {avgScore ? (
+                      <div className="flex items-baseline gap-0.5">
+                        <span
+                          className="font-display text-2xl font-medium"
+                          style={{
+                            color: isPassed ? "var(--success)" : "var(--accent-amber)",
+                            letterSpacing: "-0.02em",
+                          }}
+                        >
+                          {avgScore}
+                        </span>
+                        <span className="text-[11px] text-muted-soft">/10</span>
+                      </div>
+                    ) : isSkipped ? (
+                      <span className={`text-xs ${statusTextColor} italic`}>Skipped</span>
+                    ) : (
+                      <span className={`text-xs ${statusTextColor}`}>Not started</span>
+                    )}
+
+                    {/* Attempt count */}
+                    {hasResult && (
+                      <div className="mt-2 text-[11px] text-muted-soft font-medium">
+                        {result.attempts} attempt{result.attempts !== 1 ? "s" : ""}
+                      </div>
+                    )}
                   </div>
                 );
               })}

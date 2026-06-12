@@ -518,15 +518,6 @@ function Stats() {
                 <span className="font-display text-lg text-success font-medium leading-none">{levelPassed}</span>
                 <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider ml-1.5 leading-none whitespace-nowrap">Passed</span>
               </div>
-              <div className="flex items-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
-                {completedLevels.includes(activeTab) ? (
-                  <span className="inline-flex items-center gap-1 text-success text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none whitespace-nowrap">
-                    <Check size={12} className="stroke-[3]" /> Complete
-                  </span>
-                ) : (
-                  <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none whitespace-nowrap">In progress</span>
-                )}
-              </div>
             </div>
           </div>
 

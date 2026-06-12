@@ -41,6 +41,10 @@ function Practice() {
   const questions = useMemo(() => (level ? questionsForLevel(level) : []), [level]);
   const q = questions[currentQuestion];
 
+  const hasExistingResult = useMemo(() => {
+    return sessionResults.some((r) => r.questionId === q?.id);
+  }, [sessionResults, q?.id]);
+
   const [stage, setStage] = useState<Stage>("PROMPT");
   const [mode, setMode] = useState<"free" | "scripted" | null>(null);
   const [recordingState, setRecordingState] = useState<"idle" | "recording" | "done">("idle");
@@ -175,6 +179,13 @@ function Practice() {
       if (elapsed < 1500) await new Promise((r) => setTimeout(r, 1500 - elapsed));
       setEvalResult(result);
       setAttempts((n) => n + 1);
+      pushResult({
+        questionId: q.id,
+        attempts: 1,
+        bestScores: result.scores,
+        passed: result.passed,
+        skipped: false,
+      });
       setStage("FEEDBACK");
     } catch (err) {
       console.error(err);
@@ -209,14 +220,6 @@ function Practice() {
   };
 
   const handleNext = () => {
-    if (!evalResult) return;
-    pushResult({
-      questionId: q.id,
-      attempts,
-      bestScores: evalResult.scores,
-      passed: evalResult.passed,
-      skipped: false,
-    });
     advance();
   };
 
@@ -358,13 +361,23 @@ function Practice() {
             {/* Right side: Skip button */}
             <div className="pointer-events-auto">
               {stage === "PROMPT" ? (
-                <button
-                  onClick={handleSkip}
-                  className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface-card hover:bg-surface-cream-strong uppercase tracking-wider font-semibold"
-                  aria-label="Skip this question"
-                >
-                  Skip <ChevronRight size={12} />
-                </button>
+                hasExistingResult ? (
+                  <button
+                    onClick={advance}
+                    className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface-card hover:bg-surface-cream-strong uppercase tracking-wider font-semibold"
+                    aria-label="Next question"
+                  >
+                    Next <ChevronRight size={12} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSkip}
+                    className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface-card hover:bg-surface-cream-strong uppercase tracking-wider font-semibold"
+                    aria-label="Skip this question"
+                  >
+                    Skip <ChevronRight size={12} />
+                  </button>
+                )
               ) : (
                 <div className="w-1" />
               )}
@@ -536,6 +549,7 @@ function Practice() {
               onNext={handleNext}
               canForceNext={attempts >= 3}
               isLast={currentQuestion + 1 >= totalQuestions}
+              hasPassedPreviously={sessionResults.find((r) => r.questionId === q.id)?.passed ?? false}
             />
           )}
         </div>
@@ -584,6 +598,7 @@ function FeedbackView({
   onNext,
   canForceNext,
   isLast,
+  hasPassedPreviously,
 }: {
   evalResult: EvaluationResponse;
   attempts: number;
@@ -592,12 +607,13 @@ function FeedbackView({
   onNext: () => void;
   canForceNext: boolean;
   isLast: boolean;
+  hasPassedPreviously?: boolean;
 }) {
   const allPassed =
     evalResult.scores.clarity >= 6 &&
     evalResult.scores.grammar >= 6 &&
     evalResult.scores.confidence >= 6;
-  const canAdvance = allPassed || canForceNext;
+  const canAdvance = allPassed || canForceNext || !!hasPassedPreviously;
 
   return (
     <div className="space-y-6 mt-4">

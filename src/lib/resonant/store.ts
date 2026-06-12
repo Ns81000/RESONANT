@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { Level, QuestionResult } from "./types";
+import { questionsForLevel } from "./questions";
 
 type AllResults = Partial<Record<Level, QuestionResult[]>>;
 
@@ -22,7 +23,22 @@ interface SessionState {
 }
 
 const upsertResult = (list: QuestionResult[], r: QuestionResult): QuestionResult[] => {
+  const existing = list.find((x) => x.questionId === r.questionId);
   const without = list.filter((x) => x.questionId !== r.questionId);
+  if (existing) {
+    const merged: QuestionResult = {
+      questionId: r.questionId,
+      attempts: existing.attempts + r.attempts,
+      bestScores: {
+        clarity: Math.max(existing.bestScores.clarity, r.bestScores.clarity),
+        grammar: Math.max(existing.bestScores.grammar, r.bestScores.grammar),
+        confidence: Math.max(existing.bestScores.confidence, r.bestScores.confidence),
+      },
+      passed: existing.passed || r.passed,
+      skipped: r.skipped !== undefined ? (r.skipped && !!existing.skipped) : !!existing.skipped,
+    };
+    return [...without, merged];
+  }
   return [...without, r];
 };
 
@@ -38,6 +54,9 @@ export const useSession = create<SessionState>()(
       setName: (userName) => set({ userName }),
       setLevel: (level) =>
         set((s) => {
+          if (s.level === level) {
+            return {};
+          }
           const allResults = { ...s.allResults };
           if (s.level && s.results.length > 0) {
             const existing = allResults[s.level] ?? [];
@@ -48,9 +67,14 @@ export const useSession = create<SessionState>()(
             allResults[s.level] = merged;
           }
           const restored = allResults[level] ?? [];
+          const questions = questionsForLevel(level);
+          const firstUnansweredIndex = questions.findIndex(
+            (q) => !restored.some((r) => r.questionId === q.id)
+          );
+          const currentQuestion = firstUnansweredIndex !== -1 ? firstUnansweredIndex : 0;
           return {
             level,
-            currentQuestion: 0,
+            currentQuestion,
             results: restored,
             allResults,
           };

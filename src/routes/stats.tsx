@@ -347,7 +347,7 @@ function Stats() {
   return (
     <div ref={containerRef} className="min-h-screen bg-canvas text-ink">
       {/* Header */}
-      <header className="px-6 md:px-12 py-5 flex items-center justify-between border-b border-hairline bg-canvas">
+      <header className="px-4 md:px-12 py-5 flex items-center justify-between border-b border-hairline bg-canvas">
         <Link to="/" className="flex items-center gap-2.5">
           <span dangerouslySetInnerHTML={{ __html: logoSvg("#141413", "#cc785c") }} />
           <span className="font-display text-xl font-medium tracking-tight text-ink">Resonant</span>
@@ -357,19 +357,19 @@ function Stats() {
             const allCompleted = completedLevels.length === 3;
             navigate({ to: (level && !allCompleted) ? "/level-intro" : "/" });
           }}
-          className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-4 py-2 rounded-full border border-hairline bg-white hover:bg-surface-soft shadow-sm uppercase tracking-wider font-semibold"
+          className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-hairline bg-white hover:bg-surface-soft shadow-sm uppercase tracking-wider font-semibold"
         >
           <ArrowLeft size={12} /> Back
         </button>
       </header>
 
-      <main className="px-6 md:px-12 py-10 md:py-16 max-w-7xl mx-auto space-y-8">
+      <main className="px-4 md:px-12 py-8 md:py-16 max-w-7xl mx-auto space-y-6 md:space-y-8">
         
         {/* TOP ROW: 3 Dashboard cards parallel on desktop view */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 stat-hero">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 stat-hero">
           
           {/* Card 1: User Profile & Circular Progress */}
-          <div className="bg-white border border-hairline rounded-2xl p-6 flex flex-col items-center justify-between shadow-[0_4px_20px_rgba(20,20,19,0.015)] min-h-[290px]">
+          <div className="bg-white border border-hairline rounded-2xl p-5 md:p-6 flex flex-col items-center justify-between shadow-[0_4px_20px_rgba(20,20,19,0.015)] min-h-[270px] md:min-h-[290px]">
             <div className="text-center w-full">
               <div className="caption-up text-muted-tone mb-1 flex items-center justify-center gap-2">
                 <span className="w-3 h-px bg-hairline block" />
@@ -387,7 +387,7 @@ function Stats() {
           </div>
 
           {/* Card 2: Performance Counter Metrics */}
-          <div className="bg-white border border-hairline rounded-2xl p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(20,20,19,0.015)] min-h-[290px]">
+          <div className="bg-white border border-hairline rounded-2xl p-5 md:p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(20,20,19,0.015)] min-h-[270px] md:min-h-[290px]">
             <div className="text-center w-full">
               <div className="caption-up text-muted-tone mb-4 flex items-center justify-center gap-2">
                 <span className="w-3 h-px bg-hairline block" />
@@ -396,35 +396,35 @@ function Stats() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 w-full my-auto">
-              <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-soft/60">
+            <div className="grid grid-cols-3 gap-1.5 xs:gap-2 w-full my-auto">
+              <div className="flex flex-col items-center justify-center p-2 xs:p-2.5 rounded-xl bg-surface-soft/60">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style={{ background: "color-mix(in srgb, var(--primary) 10%, transparent)" }}>
                   <Target size={15} style={{ color: "var(--primary)" }} />
                 </div>
-                <span className="font-display text-3xl text-ink leading-none">
+                <span className="font-display text-2xl xs:text-3xl text-ink leading-none">
                   <AnimatedCounter value={totalAttempted} />
                 </span>
-                <span className="caption-up text-[10px] text-muted-soft mt-1">Attempted</span>
+                <span className="caption-up text-[9px] xs:text-[10px] text-muted-soft mt-1 text-center">Attempted</span>
               </div>
 
-              <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-soft/60">
+              <div className="flex flex-col items-center justify-center p-2 xs:p-2.5 rounded-xl bg-surface-soft/60">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style={{ background: "color-mix(in srgb, var(--success) 10%, transparent)" }}>
                   <Trophy size={15} style={{ color: "var(--success)" }} />
                 </div>
-                <span className="font-display text-3xl text-success leading-none">
+                <span className="font-display text-2xl xs:text-3xl text-success leading-none">
                   <AnimatedCounter value={totalPassed} />
                 </span>
-                <span className="caption-up text-[10px] text-muted-soft mt-1">Passed</span>
+                <span className="caption-up text-[9px] xs:text-[10px] text-muted-soft mt-1 text-center">Passed</span>
               </div>
 
-              <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-soft/60">
+              <div className="flex flex-col items-center justify-center p-2 xs:p-2.5 rounded-xl bg-surface-soft/60">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style={{ background: "color-mix(in srgb, var(--accent-amber) 10%, transparent)" }}>
                   <TrendingUp size={15} style={{ color: "var(--accent-amber)" }} />
                 </div>
-                <span className="font-display text-3xl text-accent-amber leading-none">
+                <span className="font-display text-2xl xs:text-3xl text-accent-amber leading-none">
                   <AnimatedCounter value={overallAvg} decimals={1} />
                 </span>
-                <span className="caption-up text-[10px] text-muted-soft mt-1">Avg Score</span>
+                <span className="caption-up text-[9px] xs:text-[10px] text-muted-soft mt-1 text-center">Avg Score</span>
               </div>
             </div>
 
@@ -434,7 +434,7 @@ function Stats() {
           </div>
 
           {/* Card 3: Level Completion Status */}
-          <div className="bg-white border border-hairline rounded-2xl p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(20,20,19,0.015)] min-h-[290px]">
+          <div className="bg-white border border-hairline rounded-2xl p-5 md:p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(20,20,19,0.015)] min-h-[270px] md:min-h-[290px]">
             <div className="text-center w-full">
               <div className="caption-up text-muted-tone mb-4 flex items-center justify-center gap-2">
                 <span className="w-3 h-px bg-hairline block" />
@@ -483,18 +483,18 @@ function Stats() {
         </div>
 
         {/* BOTTOM SECTION: Tabs switcher, Question Breakdown & Metrics */}
-        <div className="bg-white border border-hairline rounded-2xl p-6 md:p-8 shadow-[0_4px_20px_rgba(20,20,19,0.015)] stat-section">
+        <div className="bg-white border border-hairline rounded-2xl p-4 sm:p-6 md:p-8 shadow-[0_4px_20px_rgba(20,20,19,0.015)] stat-section">
           
           {/* Header row with Tab Switcher & Stats Summary */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-hairline/80 pb-6">
-            <div>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-6 md:mb-8 border-b border-hairline/80 pb-6">
+            <div className="w-full lg:w-auto">
               <h2 className="caption-up text-xs text-muted-tone mb-2">Select Level</h2>
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-soft border border-hairline/80 w-fit">
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-soft border border-hairline/80 w-full sm:w-fit">
                 {LEVELS.map((lvl) => (
                   <button
                     key={lvl}
                     onClick={() => setActiveTab(lvl)}
-                    className="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold uppercase tracking-wider transition-all duration-200"
+                    className="flex-1 sm:flex-initial text-center py-2 sm:px-4 rounded-lg text-[10px] xs:text-xs md:text-sm font-semibold uppercase tracking-wider transition-all duration-200"
                     style={{
                       background: activeTab === lvl ? "var(--primary)" : "transparent",
                       color: activeTab === lvl ? "var(--on-primary)" : "var(--muted)",
@@ -506,22 +506,22 @@ function Stats() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 text-xs font-medium text-body">
-              <div className="flex items-center h-9 px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+              <div className="flex-1 lg:flex-initial flex items-center justify-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
                 <span className="font-display text-lg text-ink font-medium leading-none">{levelAttempted}</span>
-                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1.5 leading-none">/ {activeQuestions.length} Attempted</span>
+                <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider ml-1.5 leading-none">/ {activeQuestions.length} Attempted</span>
               </div>
-              <div className="flex items-center h-9 px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+              <div className="flex-1 lg:flex-initial flex items-center justify-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
                 <span className="font-display text-lg text-success font-medium leading-none">{levelPassed}</span>
-                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1.5 leading-none">Passed</span>
+                <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider ml-1.5 leading-none">Passed</span>
               </div>
-              <div className="flex items-center h-9 px-3 rounded-lg bg-surface-soft border border-hairline-soft">
+              <div className="flex-1 lg:flex-initial flex items-center justify-center h-9 px-2.5 sm:px-3 rounded-lg bg-surface-soft border border-hairline-soft">
                 {completedLevels.includes(activeTab) ? (
-                  <span className="inline-flex items-center gap-1 text-success text-[11px] uppercase tracking-wider font-semibold leading-none">
+                  <span className="inline-flex items-center gap-1 text-success text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none">
                     <Check size={12} className="stroke-[3]" /> Complete
                   </span>
                 ) : (
-                  <span className="text-muted-tone text-[11px] uppercase tracking-wider font-semibold leading-none">In progress</span>
+                  <span className="text-muted-tone text-[10px] xs:text-[11px] uppercase tracking-wider font-semibold leading-none">In progress</span>
                 )}
               </div>
             </div>
@@ -530,7 +530,7 @@ function Stats() {
           {/* Question Breakdown Grid */}
           <div className="mb-8">
             <h3 className="caption-up text-xs text-muted-tone mb-4">Question Breakdown</h3>
-            <div ref={gridRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div ref={gridRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
               {activeQuestions.map((qItem, i) => {
                 const result = activeResults.find((r) => r.questionId === qItem.id);
                 const isPassed = result && !result.skipped && result.passed;
@@ -575,7 +575,7 @@ function Stats() {
                 return (
                   <div
                     key={qItem.id}
-                    className={`q-card relative p-4 rounded-xl transition-colors duration-200 hover:scale-[1.02] border ${statusColor} ${borderColor}`}
+                    className={`q-card relative p-3.5 xs:p-4 rounded-xl transition-colors duration-200 hover:scale-[1.02] border ${statusColor} ${borderColor}`}
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between mb-3">

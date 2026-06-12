@@ -128,10 +128,10 @@ function ProgressRing({
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-display text-3xl text-ink" style={{ letterSpacing: "-0.03em" }}>
+        <span className="font-display text-4xl text-ink" style={{ letterSpacing: "-0.03em" }}>
           <AnimatedCounter value={Math.round(fraction * 100)} suffix="%" />
         </span>
-        <span className="caption-up text-[8px] text-muted-tone mt-0.5">Overall</span>
+        <span className="caption-up text-[10px] text-muted-tone mt-0.5">Overall</span>
       </div>
     </div>
   );
@@ -171,14 +171,14 @@ function ScoreBar({
 
   return (
     <div className="flex items-center gap-4">
-      <span className="caption-up text-[10px] text-muted-tone w-24 text-right flex-shrink-0">
+      <span className="caption-up text-xs text-muted-tone w-24 text-right flex-shrink-0">
         {label}
       </span>
       <div className="flex-1 h-2 rounded-full bg-surface-cream-strong overflow-hidden">
         <div ref={barRef} className="h-full rounded-full" style={{ background: color, width: 0 }} />
       </div>
       <span
-        className="font-display text-lg w-10 text-right flex-shrink-0"
+        className="font-display text-xl w-10 text-right flex-shrink-0"
         style={{ color, letterSpacing: "-0.02em" }}
       >
         {value > 0 ? value.toFixed(1) : "—"}
@@ -398,34 +398,34 @@ function Stats() {
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style={{ background: "color-mix(in srgb, var(--primary) 10%, transparent)" }}>
                   <Target size={15} style={{ color: "var(--primary)" }} />
                 </div>
-                <span className="font-display text-xl text-ink leading-none">
+                <span className="font-display text-3xl text-ink leading-none">
                   <AnimatedCounter value={totalAttempted} />
                 </span>
-                <span className="caption-up text-[8px] text-muted-soft mt-1">Attempted</span>
+                <span className="caption-up text-[10px] text-muted-soft mt-1">Attempted</span>
               </div>
 
               <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-soft/60">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style={{ background: "color-mix(in srgb, var(--success) 10%, transparent)" }}>
                   <Trophy size={15} style={{ color: "var(--success)" }} />
                 </div>
-                <span className="font-display text-xl text-success leading-none">
+                <span className="font-display text-3xl text-success leading-none">
                   <AnimatedCounter value={totalPassed} />
                 </span>
-                <span className="caption-up text-[8px] text-muted-soft mt-1">Passed</span>
+                <span className="caption-up text-[10px] text-muted-soft mt-1">Passed</span>
               </div>
 
               <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-soft/60">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style={{ background: "color-mix(in srgb, var(--accent-amber) 10%, transparent)" }}>
                   <TrendingUp size={15} style={{ color: "var(--accent-amber)" }} />
                 </div>
-                <span className="font-display text-xl text-accent-amber leading-none">
+                <span className="font-display text-3xl text-accent-amber leading-none">
                   <AnimatedCounter value={overallAvg} decimals={1} />
                 </span>
-                <span className="caption-up text-[8px] text-muted-soft mt-1">Avg Score</span>
+                <span className="caption-up text-[10px] text-muted-soft mt-1">Avg Score</span>
               </div>
             </div>
 
-            <div className="text-[10px] text-muted-soft text-center mt-2">
+            <div className="text-xs text-muted-soft text-center mt-2">
               Practice regularly to refine your averages
             </div>
           </div>
@@ -456,19 +456,19 @@ function Stats() {
                       borderColor: isComplete ? "color-mix(in srgb, var(--success) 20%, transparent)" : "var(--hairline-soft)",
                     }}
                   >
-                    <span className="caption-up text-[9px] font-semibold text-body">
+                    <span className="caption-up text-[11px] font-semibold text-body">
                       {LEVEL_INFO[lvl].title}
                     </span>
                     {isComplete ? (
-                      <div className="flex items-center gap-1 text-[9px] font-semibold text-success uppercase tracking-wider">
+                      <div className="flex items-center gap-1 text-[11px] font-semibold text-success uppercase tracking-wider">
                         <Check size={11} className="stroke-[3]" /> Complete
                       </div>
                     ) : att > 0 ? (
-                      <div className="flex items-center gap-1 text-[9px] font-semibold text-accent-amber uppercase tracking-wider">
+                      <div className="flex items-center gap-1 text-[11px] font-semibold text-accent-amber uppercase tracking-wider">
                         <span className="w-1.5 h-1.5 rounded-full bg-accent-amber animate-pulse" /> In Progress
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-[9px] font-semibold text-muted-soft uppercase tracking-wider opacity-60">
+                      <div className="flex items-center gap-1 text-[11px] font-semibold text-muted-soft uppercase tracking-wider opacity-60">
                         <Minus size={11} /> Not Started
                       </div>
                     )}
@@ -485,13 +485,13 @@ function Stats() {
           {/* Header row with Tab Switcher & Stats Summary */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-hairline/80 pb-6">
             <div>
-              <h2 className="caption-up text-[10px] text-muted-tone mb-2">Select Level</h2>
+              <h2 className="caption-up text-xs text-muted-tone mb-2">Select Level</h2>
               <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-soft border border-hairline/80 w-fit">
                 {LEVELS.map((lvl) => (
                   <button
                     key={lvl}
                     onClick={() => setActiveTab(lvl)}
-                    className="px-4 py-2 rounded-lg text-[10px] md:text-xs font-semibold uppercase tracking-wider transition-all duration-200"
+                    className="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold uppercase tracking-wider transition-all duration-200"
                     style={{
                       background: activeTab === lvl ? "var(--primary)" : "transparent",
                       color: activeTab === lvl ? "var(--on-primary)" : "var(--muted)",
@@ -505,20 +505,20 @@ function Stats() {
 
             <div className="flex flex-wrap items-center gap-2.5 text-xs font-medium text-body">
               <div className="px-3 py-1.5 rounded-lg bg-surface-soft border border-hairline-soft">
-                <span className="font-display text-base text-ink font-medium">{levelAttempted}</span>
-                <span className="text-muted-tone text-[9px] uppercase tracking-wider ml-1">/ 10 Attempted</span>
+                <span className="font-display text-lg text-ink font-medium">{levelAttempted}</span>
+                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1">/ 10 Attempted</span>
               </div>
               <div className="px-3 py-1.5 rounded-lg bg-surface-soft border border-hairline-soft">
-                <span className="font-display text-base text-success font-medium">{levelPassed}</span>
-                <span className="text-muted-tone text-[9px] uppercase tracking-wider ml-1">Passed</span>
+                <span className="font-display text-lg text-success font-medium">{levelPassed}</span>
+                <span className="text-muted-tone text-[11px] uppercase tracking-wider ml-1">Passed</span>
               </div>
               <div className="px-3 py-1.5 rounded-lg bg-surface-soft border border-hairline-soft">
                 {completedLevels.includes(activeTab) ? (
-                  <span className="inline-flex items-center gap-1 text-success text-[9px] uppercase tracking-wider font-semibold">
+                  <span className="inline-flex items-center gap-1 text-success text-[11px] uppercase tracking-wider font-semibold">
                     <Check size={12} className="stroke-[3]" /> Complete
                   </span>
                 ) : (
-                  <span className="text-muted-tone text-[9px] uppercase tracking-wider font-semibold">In progress</span>
+                  <span className="text-muted-tone text-[11px] uppercase tracking-wider font-semibold">In progress</span>
                 )}
               </div>
             </div>
@@ -526,7 +526,7 @@ function Stats() {
 
           {/* Question Breakdown Grid */}
           <div className="mb-8">
-            <h3 className="caption-up text-[10px] text-muted-tone mb-4">Question Breakdown</h3>
+            <h3 className="caption-up text-xs text-muted-tone mb-4">Question Breakdown</h3>
             <div ref={gridRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {activeQuestions.map((qItem, i) => {
                 const result = activeResults.find((r) => r.questionId === qItem.id);
@@ -537,18 +537,21 @@ function Stats() {
 
                 let statusColor = "bg-white";
                 let borderColor = "border-hairline";
+                let contentOpacity = "opacity-100";
                 if (isPassed) {
                   statusColor = "bg-success/5";
-                  borderColor = "border-success/20";
+                  borderColor = "border-success/50";
                 } else if (isFailed) {
                   statusColor = "bg-accent-amber/5";
-                  borderColor = "border-accent-amber/20";
+                  borderColor = "border-accent-amber/50";
                 } else if (isSkipped) {
-                  statusColor = "bg-transparent";
-                  borderColor = "border-dashed border-muted-soft/40";
+                  statusColor = "bg-surface-soft/30";
+                  borderColor = "border-dashed border-muted-soft/60";
+                  contentOpacity = "opacity-75";
                 } else {
-                  statusColor = "bg-transparent opacity-65";
-                  borderColor = "border-hairline/60";
+                  statusColor = "bg-white";
+                  borderColor = "border-hairline";
+                  contentOpacity = "opacity-60";
                 }
 
                 const avgScore = hasResult
@@ -560,55 +563,57 @@ function Stats() {
                     key={qItem.id}
                     className={`q-card relative p-4 rounded-xl transition-colors duration-200 hover:scale-[1.02] border ${statusColor} ${borderColor}`}
                   >
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="caption-up text-[9px] text-muted-tone">Q{i + 1}</span>
-                      {isPassed ? (
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-success/10">
-                          <Check size={11} className="text-success stroke-[3]" />
-                        </div>
-                      ) : isFailed ? (
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-accent-amber/10">
-                          <X size={11} className="text-accent-amber stroke-[3]" />
+                    <div className={contentOpacity}>
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="caption-up text-[11px] text-muted-tone">Q{i + 1}</span>
+                        {isPassed ? (
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center bg-success/10">
+                            <Check size={11} className="text-success stroke-[3]" />
+                          </div>
+                        ) : isFailed ? (
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center bg-accent-amber/10">
+                            <X size={11} className="text-accent-amber stroke-[3]" />
+                          </div>
+                        ) : isSkipped ? (
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center bg-surface-soft">
+                            <SkipForward size={9} className="text-muted-soft opacity-60" />
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-surface-soft" />
+                        )}
+                      </div>
+
+                      {/* Category */}
+                      <p className="text-sm text-ink font-semibold mb-1 truncate">{qItem.category}</p>
+
+                      {/* Score or status */}
+                      {avgScore ? (
+                        <div className="flex items-baseline gap-0.5">
+                          <span
+                            className="font-display text-2xl font-medium"
+                            style={{
+                              color: isPassed ? "var(--success)" : "var(--accent-amber)",
+                              letterSpacing: "-0.02em",
+                            }}
+                          >
+                            {avgScore}
+                          </span>
+                          <span className="text-[11px] text-muted-soft">/10</span>
                         </div>
                       ) : isSkipped ? (
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-surface-soft">
-                          <SkipForward size={9} className="text-muted-soft opacity-60" />
-                        </div>
+                        <span className="text-xs text-muted-soft italic">Skipped</span>
                       ) : (
-                        <div className="w-5 h-5 rounded-full bg-surface-soft" />
+                        <span className="text-xs text-muted-soft">Not started</span>
+                      )}
+
+                      {/* Attempt count */}
+                      {hasResult && (
+                        <div className="mt-2 text-[11px] text-muted-soft font-medium">
+                          {result.attempts} attempt{result.attempts !== 1 ? "s" : ""}
+                        </div>
                       )}
                     </div>
-
-                    {/* Category */}
-                    <p className="text-xs text-ink font-semibold mb-1 truncate">{qItem.category}</p>
-
-                    {/* Score or status */}
-                    {avgScore ? (
-                      <div className="flex items-baseline gap-0.5">
-                        <span
-                          className="font-display text-xl font-medium"
-                          style={{
-                            color: isPassed ? "var(--success)" : "var(--accent-amber)",
-                            letterSpacing: "-0.02em",
-                          }}
-                        >
-                          {avgScore}
-                        </span>
-                        <span className="text-[9px] text-muted-soft">/10</span>
-                      </div>
-                    ) : isSkipped ? (
-                      <span className="text-[10px] text-muted-soft italic">Skipped</span>
-                    ) : (
-                      <span className="text-[10px] text-muted-soft opacity-65">Not started</span>
-                    )}
-
-                    {/* Attempt count */}
-                    {hasResult && (
-                      <div className="mt-2 text-[9px] text-muted-soft font-medium">
-                        {result.attempts} attempt{result.attempts !== 1 ? "s" : ""}
-                      </div>
-                    )}
                   </div>
                 );
               })}
@@ -618,7 +623,7 @@ function Stats() {
           {/* Level Averages Score Bars */}
           {levelAttempted > 0 && (
             <div className="bg-surface-soft/60 border border-hairline-soft p-5 md:p-6 rounded-2xl">
-              <div className="caption-up text-[10px] text-muted-tone mb-4">Level Averages</div>
+              <div className="caption-up text-xs text-muted-tone mb-4">Level Averages</div>
               <div className="space-y-4">
                 <ScoreBar label="Clarity" value={levelAverages.clarity} delay={0} />
                 <ScoreBar label="Grammar" value={levelAverages.grammar} delay={0.1} />

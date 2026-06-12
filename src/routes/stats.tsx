@@ -284,10 +284,8 @@ function Stats() {
     } else if (nextLevelToPractice) {
       if (nextLevelToPractice !== level) {
         useSession.getState().setLevel(nextLevelToPractice);
-        navigate({ to: "/level-intro" });
-      } else {
-        navigate({ to: "/practice" });
       }
+      navigate({ to: "/level-intro" });
     } else {
       navigate({ to: "/setup" });
     }

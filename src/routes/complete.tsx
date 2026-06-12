@@ -314,12 +314,6 @@ function Complete() {
               >
                 Continue practicing <ArrowRight size={18} className="ml-2" />
               </button>
-              <button
-                onClick={handlePracticeAgain}
-                className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
-              >
-                Restart level
-              </button>
             </>
           )}
         </div>

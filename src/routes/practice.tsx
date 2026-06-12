@@ -245,17 +245,17 @@ function Practice() {
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
       {/* Top progress */}
-      <header className="px-6 md:px-12 py-5 flex items-center justify-between border-b border-hairline-soft">
-        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+      <header className="px-4 sm:px-6 md:px-12 py-5 flex items-center justify-between border-b border-hairline-soft">
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
           <span dangerouslySetInnerHTML={{ __html: logoSvg("#cc785c") }} />
-          <span className="font-display text-lg text-ink">Resonant</span>
+          <span className="font-display text-base sm:text-lg text-ink hidden min-[400px]:inline">Resonant</span>
         </Link>
-        <div className="flex items-center gap-4">
-          <span className="caption-up text-muted-tone">
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          <span className="caption-up text-xs text-muted-tone whitespace-nowrap">
             {String(currentQuestion + 1).padStart(2, "0")} /{" "}
             {String(totalQuestions).padStart(2, "0")}
           </span>
-          <div className="hidden md:flex gap-1.5 items-center">
+          <div className="flex gap-1 sm:gap-1.5 items-center">
             {questions.map((qItem, i) => {
               const result = sessionResults.find((r) => r.questionId === qItem.id);
               const isCurrent = i === currentQuestion;
@@ -371,7 +371,7 @@ function Practice() {
                 hasExistingResult ? (
                   <button
                     onClick={advance}
-                    className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface-card hover:bg-surface-cream-strong uppercase tracking-wider font-semibold"
+                    className="btn-nav"
                     aria-label="Next question"
                   >
                     Next <ChevronRight size={12} />
@@ -379,7 +379,7 @@ function Practice() {
                 ) : (
                   <button
                     onClick={handleSkip}
-                    className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface-card hover:bg-surface-cream-strong uppercase tracking-wider font-semibold"
+                    className="btn-nav"
                     aria-label="Skip this question"
                   >
                     Skip <ChevronRight size={12} />

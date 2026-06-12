@@ -1,8 +1,8 @@
 import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check, X, SkipForward, BarChart2 } from "lucide-react";
 import { useSession } from "@/lib/resonant/store";
-import { LEVEL_INFO } from "@/lib/resonant/questions";
+import { LEVEL_INFO, questionsForLevel } from "@/lib/resonant/questions";
 import { ScoreDial } from "@/components/resonant/ScoreDial";
 import type { Level } from "@/lib/resonant/types";
 
@@ -18,8 +18,21 @@ function Complete() {
   const { userName, level, results, setLevel, resetProgress, completedLevels } = useSession();
   const ref = useRef<HTMLDivElement>(null);
 
+  const questions = useMemo(() => (level ? questionsForLevel(level) : []), [level]);
+  const totalQuestions = questions.length;
+
+  const attempted = useMemo(() => results.filter((r) => !r.skipped && r.attempts > 0), [results]);
+  const passed = useMemo(() => attempted.filter((r) => r.passed), [attempted]);
+  const skipped = useMemo(
+    () => results.filter((r) => r.skipped || r.attempts === 0),
+    [results],
+  );
+
+  const allAttempted = attempted.length === totalQuestions;
+  const allPassed = passed.length === totalQuestions;
+  const noneAttempted = attempted.length === 0;
+
   const averages = useMemo(() => {
-    const attempted = results.filter((r) => r.attempts > 0);
     if (!attempted.length) return { clarity: 0, grammar: 0, confidence: 0 };
     const sum = attempted.reduce(
       (acc, r) => ({
@@ -34,11 +47,7 @@ function Complete() {
       grammar: sum.grammar / attempted.length,
       confidence: sum.confidence / attempted.length,
     };
-  }, [results]);
-
-  const allSkipped = useMemo(() => {
-    return results.length > 0 && results.every((r) => r.skipped && r.attempts === 0);
-  }, [results]);
+  }, [attempted]);
 
   useEffect(() => {
     let mounted = true;
@@ -46,25 +55,26 @@ function Complete() {
       const { gsap } = await import("gsap");
       if (!mounted || !ref.current) return;
       const ctx = gsap.context(() => {
-        // Particle burst
-        const particles = ref.current!.querySelectorAll<HTMLSpanElement>(".particle");
-        particles.forEach((p, i) => {
-          const angle = (i / particles.length) * Math.PI * 2;
-          const dist = 200 + Math.random() * 200;
-          gsap.fromTo(
-            p,
-            { x: 0, y: 0, opacity: 1, scale: 0 },
-            {
-              x: Math.cos(angle) * dist,
-              y: Math.sin(angle) * dist,
-              opacity: 0,
-              scale: 1,
-              duration: 1.4,
-              ease: "power3.out",
-              delay: 0.2,
-            },
-          );
-        });
+        if (!noneAttempted) {
+          const particles = ref.current!.querySelectorAll<HTMLSpanElement>(".particle");
+          particles.forEach((p, i) => {
+            const angle = (i / particles.length) * Math.PI * 2;
+            const dist = 200 + Math.random() * 200;
+            gsap.fromTo(
+              p,
+              { x: 0, y: 0, opacity: 1, scale: 0 },
+              {
+                x: Math.cos(angle) * dist,
+                y: Math.sin(angle) * dist,
+                opacity: 0,
+                scale: 1,
+                duration: 1.4,
+                ease: "power3.out",
+                delay: 0.2,
+              },
+            );
+          });
+        }
         gsap.from(".cele", {
           y: 30,
           opacity: 0,
@@ -79,7 +89,7 @@ function Complete() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [noneAttempted]);
 
   if (hydrated && (!userName || !level)) return <Navigate to="/" />;
   if (!hydrated || !level) return <div className="min-h-screen bg-surface-dark" />;
@@ -99,13 +109,30 @@ function Complete() {
     navigate({ to: "/level-intro" });
   };
 
+  const headingText = noneAttempted
+    ? "Practice Incomplete"
+    : allPassed
+      ? "Level mastered!"
+      : allAttempted
+        ? "Level complete."
+        : "Session finished.";
+
+  const subtitleText = noneAttempted
+    ? "You skipped all the scenarios in this level. Try speaking and answering to complete the level and unlock the next one!"
+    : allPassed && isAdvanced
+      ? `You've completed all three levels. Keep speaking, ${userName}. The room is listening.`
+      : allPassed
+        ? "Every scenario nailed. You're ready for what's next."
+        : allAttempted
+          ? "All scenarios attempted. Keep polishing to master this level."
+          : `You attempted ${attempted.length} of ${totalQuestions} scenarios. Go back to finish the rest.`;
+
   return (
     <div
       ref={ref}
       className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center px-6 py-12 text-center relative overflow-y-auto overflow-x-hidden"
     >
-      {/* Particles (only show if not skipped all) */}
-      {!allSkipped && (
+      {!noneAttempted && (
         <div className="absolute top-1/2 left-1/2">
           {Array.from({ length: 30 }).map((_, i) => (
             <span
@@ -117,41 +144,94 @@ function Complete() {
         </div>
       )}
 
-      <div className="relative max-w-2xl my-auto py-8">
-        <div className="cele caption-up text-on-dark-soft mb-6">
-          {allSkipped ? "Practice Incomplete" : "Level complete"}
-        </div>
+      <div className="relative max-w-2xl my-auto py-8 w-full">
+        <div className="cele caption-up text-on-dark-soft mb-6">{headingText}</div>
         <h1 className="cele display-xl mb-4">{userName}</h1>
         <p className="cele display-sm text-on-dark-soft mb-2 font-display">
-          {LEVEL_INFO[level].title} Level — {allSkipped ? "skipped" : "done."}
+          {LEVEL_INFO[level].title} Level
         </p>
-        {allSkipped ? (
-          <p className="cele text-on-dark-soft max-w-md mx-auto mb-12">
-            You skipped all the scenarios in this level. Try speaking and answering to complete the
-            level and unlock the next one!
-          </p>
-        ) : isAdvanced ? (
-          <p className="cele text-on-dark-soft max-w-md mx-auto mb-12">
-            You've completed all three levels. Keep speaking, {userName}. The room is listening.
-          </p>
-        ) : (
-          <p className="cele text-on-dark-soft max-w-md mx-auto mb-12">
-            That's ten real corporate scenarios under your belt. Take a breath — then keep going.
-          </p>
-        )}
+        <p className="cele text-on-dark-soft max-w-md mx-auto mb-8">{subtitleText}</p>
 
-        {!allSkipped && (
-          <div className="cele flex items-center justify-center gap-4 sm:gap-6 mb-12 md:mb-16 flex-wrap">
+        {/* Summary stats */}
+        <div className="cele flex items-center justify-center gap-6 mb-8 flex-wrap">
+          <div className="flex flex-col items-center">
+            <span className="font-display text-3xl text-on-dark">{attempted.length}</span>
+            <span className="caption-up text-[10px] text-on-dark-soft mt-1">Attempted</span>
+          </div>
+          <div className="w-px h-8 bg-white/10" />
+          <div className="flex flex-col items-center">
+            <span className="font-display text-3xl" style={{ color: "var(--success)" }}>
+              {passed.length}
+            </span>
+            <span className="caption-up text-[10px] text-on-dark-soft mt-1">Passed</span>
+          </div>
+          <div className="w-px h-8 bg-white/10" />
+          <div className="flex flex-col items-center">
+            <span className="font-display text-3xl text-on-dark-soft">{skipped.length}</span>
+            <span className="caption-up text-[10px] text-on-dark-soft mt-1">Skipped</span>
+          </div>
+        </div>
+
+        {/* Score dials */}
+        {attempted.length > 0 && (
+          <div className="cele flex items-center justify-center gap-4 sm:gap-6 mb-8 flex-wrap">
             <ScoreDial value={averages.clarity} label="Clarity" size={96} />
             <ScoreDial value={averages.grammar} label="Grammar" size={96} />
             <ScoreDial value={averages.confidence} label="Confidence" size={96} />
           </div>
         )}
 
+        {/* Per-question breakdown grid */}
+        <div className="cele mb-10">
+          <div className="caption-up text-on-dark-soft mb-4 text-[10px]">Question breakdown</div>
+          <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 max-w-md mx-auto">
+            {questions.map((qItem, i) => {
+              const result = results.find((r) => r.questionId === qItem.id);
+              const isPassed = result && !result.skipped && result.passed;
+              const isFailed = result && !result.skipped && !result.passed;
+              const isSkipped = result && result.skipped;
+
+              return (
+                <div
+                  key={qItem.id}
+                  className="relative flex items-center justify-center w-full aspect-square rounded-lg text-xs font-mono transition-all"
+                  style={{
+                    background: isPassed
+                      ? "color-mix(in srgb, var(--success) 20%, transparent)"
+                      : isFailed
+                        ? "color-mix(in srgb, var(--accent-amber) 20%, transparent)"
+                        : isSkipped
+                          ? "transparent"
+                          : "var(--surface-dark-elevated)",
+                    border: isSkipped
+                      ? "1.5px dashed var(--on-dark-soft)"
+                      : "1px solid rgba(255,255,255,0.06)",
+                  }}
+                  title={`Q${i + 1}: ${qItem.category} — ${isPassed ? "Passed" : isFailed ? "Not passed" : isSkipped ? "Skipped" : "Not started"}`}
+                >
+                  {isPassed ? (
+                    <Check size={14} style={{ color: "var(--success)" }} />
+                  ) : isFailed ? (
+                    <X size={14} style={{ color: "var(--accent-amber)" }} />
+                  ) : isSkipped ? (
+                    <SkipForward size={10} className="text-on-dark-soft opacity-50" />
+                  ) : (
+                    <span className="text-on-dark-soft opacity-30">{i + 1}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Action buttons */}
         <div className="cele flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
-          {allSkipped ? (
+          {noneAttempted ? (
             <>
-              <button onClick={handlePracticeAgain} className="btn-primary !h-14 !px-8 w-full sm:w-auto">
+              <button
+                onClick={handlePracticeAgain}
+                className="btn-primary !h-14 !px-8 w-full sm:w-auto"
+              >
                 Practice this level again <ArrowRight size={18} className="ml-2" />
               </button>
               <button
@@ -161,38 +241,69 @@ function Complete() {
                 Back to home
               </button>
             </>
-          ) : nextLevel ? (
+          ) : nextLevel && allAttempted ? (
             <>
-              <button onClick={handleNextLevel} className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center">
+              <button
+                onClick={handleNextLevel}
+                className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center"
+              >
                 Continue to {LEVEL_INFO[nextLevel].title}
                 <ArrowRight size={18} className="ml-2" />
               </button>
-              <button onClick={handlePracticeAgain} className="btn-on-dark !h-14 w-full sm:w-auto justify-center">
+              <button
+                onClick={handlePracticeAgain}
+                className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
+              >
                 Practice this level again
               </button>
+            </>
+          ) : !allAttempted ? (
+            <>
               <button
-                onClick={() => navigate({ to: "/" })}
-                className="text-sm text-on-dark-soft hover:text-on-dark transition py-2 px-4 w-full sm:w-auto text-center"
+                onClick={() => navigate({ to: "/practice" })}
+                className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center"
               >
-                Back to home
+                Continue practicing <ArrowRight size={18} className="ml-2" />
+              </button>
+              <button
+                onClick={handlePracticeAgain}
+                className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
+              >
+                Restart level
               </button>
             </>
           ) : (
             <>
-              <button onClick={() => navigate({ to: "/" })} className="btn-primary !h-14 !px-8 w-full sm:w-auto justify-center">
+              <button
+                onClick={() => navigate({ to: "/" })}
+                className="btn-primary !h-14 !px-8 w-full sm:w-auto justify-center"
+              >
                 Back to home <ArrowRight size={18} className="ml-2" />
               </button>
-              <button onClick={handlePracticeAgain} className="btn-on-dark !h-14 w-full sm:w-auto justify-center">
+              <button
+                onClick={handlePracticeAgain}
+                className="btn-on-dark !h-14 w-full sm:w-auto justify-center"
+              >
                 Practice this level again
               </button>
             </>
           )}
         </div>
 
-        <div className="cele caption-up text-on-dark-soft mt-12">
-          {completedLevels.length} of 3 levels complete
+        {/* Stats + completion footer */}
+        <div className="cele flex flex-col items-center gap-3 mt-10">
+          <div className="caption-up text-on-dark-soft">
+            {completedLevels.length} of 3 levels complete
+          </div>
+          <button
+            onClick={() => navigate({ to: "/stats" })}
+            className="inline-flex items-center gap-2 text-xs text-primary hover:text-accent-amber transition-colors uppercase tracking-wider font-semibold"
+          >
+            <BarChart2 size={14} /> View full stats
+          </button>
         </div>
       </div>
     </div>
   );
 }
+

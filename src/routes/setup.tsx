@@ -137,7 +137,7 @@ function Setup() {
                     <button
                       key={lvl}
                       onClick={() => setSelected(lvl)}
-                      className={`relative text-left p-5 md:p-7 rounded-xl border-2 transition-all overflow-hidden ${
+                      className={`relative text-left p-5 md:p-7 rounded-xl border-2 transition-colors duration-200 overflow-hidden ${
                         isSelected
                           ? "border-primary bg-surface-card shadow-lg -translate-y-1"
                           : "border-hairline bg-canvas hover:border-ink/30 hover:-translate-y-0.5"

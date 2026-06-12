@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatsRouteImport } from './routes/stats'
 import { Route as SetupRouteImport } from './routes/setup'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as LevelIntroRouteImport } from './routes/level-intro'
 import { Route as CompleteRouteImport } from './routes/complete'
 import { Route as IndexRouteImport } from './routes/index'
 
+const StatsRoute = StatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SetupRoute = SetupRouteImport.update({
   id: '/setup',
   path: '/setup',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/level-intro': typeof LevelIntroRoute
   '/practice': typeof PracticeRoute
   '/setup': typeof SetupRoute
+  '/stats': typeof StatsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/level-intro': typeof LevelIntroRoute
   '/practice': typeof PracticeRoute
   '/setup': typeof SetupRoute
+  '/stats': typeof StatsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/level-intro': typeof LevelIntroRoute
   '/practice': typeof PracticeRoute
   '/setup': typeof SetupRoute
+  '/stats': typeof StatsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/complete' | '/level-intro' | '/practice' | '/setup'
+  fullPaths:
+    | '/'
+    | '/complete'
+    | '/level-intro'
+    | '/practice'
+    | '/setup'
+    | '/stats'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/complete' | '/level-intro' | '/practice' | '/setup'
-  id: '__root__' | '/' | '/complete' | '/level-intro' | '/practice' | '/setup'
+  to: '/' | '/complete' | '/level-intro' | '/practice' | '/setup' | '/stats'
+  id:
+    | '__root__'
+    | '/'
+    | '/complete'
+    | '/level-intro'
+    | '/practice'
+    | '/setup'
+    | '/stats'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +99,18 @@ export interface RootRouteChildren {
   LevelIntroRoute: typeof LevelIntroRoute
   PracticeRoute: typeof PracticeRoute
   SetupRoute: typeof SetupRoute
+  StatsRoute: typeof StatsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stats': {
+      id: '/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof StatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/setup': {
       id: '/setup'
       path: '/setup'
@@ -125,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   LevelIntroRoute: LevelIntroRoute,
   PracticeRoute: PracticeRoute,
   SetupRoute: SetupRoute,
+  StatsRoute: StatsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

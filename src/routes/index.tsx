@@ -28,9 +28,10 @@ function Landing() {
   const level = useSession((s) => s.level);
   const currentQuestion = useSession((s) => s.currentQuestion);
   const results = useSession((s) => s.results);
+  const completedLevels = useSession((s) => s.completedLevels);
 
   const hasSession = hydrated && !!userName && !!level;
-  const currentLevelCompleted = hasSession && results.length === 10;
+  const currentLevelCompleted = hasSession && completedLevels.includes(level!);
 
   const nextLevel = useMemo(() => {
     if (!level) return null;

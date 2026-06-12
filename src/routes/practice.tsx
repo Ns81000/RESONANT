@@ -34,7 +34,7 @@ function Practice() {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
   const navigate = useNavigate();
-  const { userName, level, currentQuestion, setCurrentQuestion, pushResult, completeLevel } =
+  const { userName, level, currentQuestion, results: sessionResults, setCurrentQuestion, pushResult, completeLevel } =
     useSession();
   const analyze = useServerFn(analyzeSpeech);
 
@@ -193,13 +193,12 @@ function Practice() {
     setEvalResult(null);
     setMode(null);
     if (currentQuestion + 1 >= totalQuestions) {
-      // Don't mark the level as completed if they skipped all questions without trying
       const currentResults = useSession.getState().results;
-      const allSkipped =
+      const allAttempted =
         currentResults.length >= totalQuestions &&
-        currentResults.every((r) => r.skipped && r.attempts === 0);
+        currentResults.every((r) => !r.skipped && r.attempts > 0);
 
-      if (!allSkipped) {
+      if (allAttempted) {
         completeLevel(level);
       }
       navigate({ to: "/complete" });
@@ -246,22 +245,38 @@ function Practice() {
             {String(currentQuestion + 1).padStart(2, "0")} /{" "}
             {String(totalQuestions).padStart(2, "0")}
           </span>
-          <div className="hidden md:flex gap-1.5">
-            {questions.map((_, i) => (
-              <span
-                key={i}
-                className="h-1.5 rounded-full transition-all"
-                style={{
-                  width: i === currentQuestion ? 22 : 6,
-                  background:
-                    i < currentQuestion
-                      ? "var(--primary)"
-                      : i === currentQuestion
-                        ? "var(--primary)"
-                        : "var(--hairline)",
-                }}
-              />
-            ))}
+          <div className="hidden md:flex gap-1.5 items-center">
+            {questions.map((qItem, i) => {
+              const result = sessionResults.find((r) => r.questionId === qItem.id);
+              const isCurrent = i === currentQuestion;
+              let bg = "var(--hairline)";
+              let border = "none";
+              let w = 6;
+              if (isCurrent) {
+                bg = "var(--primary)";
+                w = 22;
+              } else if (result && !result.skipped && result.passed) {
+                bg = "var(--success)";
+              } else if (result && !result.skipped && !result.passed) {
+                bg = "var(--accent-amber)";
+              } else if (result && result.skipped) {
+                bg = "transparent";
+                border = "1.5px dashed var(--muted-soft)";
+              }
+              return (
+                <span
+                  key={i}
+                  className="rounded-full transition-all"
+                  style={{
+                    width: w,
+                    height: 6,
+                    background: bg,
+                    border,
+                    flexShrink: 0,
+                  }}
+                />
+              );
+            })}
           </div>
           <button
             onClick={() => setHangUpOpen(true)}

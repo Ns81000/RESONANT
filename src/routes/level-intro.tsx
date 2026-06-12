@@ -73,13 +73,6 @@ function LevelIntro() {
         >
           <ArrowLeft size={12} /> Change Level
         </button>
-
-        <button
-          onClick={() => navigate({ to: "/practice" })}
-          className="text-xs text-on-dark-soft hover:text-on-dark transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold"
-        >
-          Skip <ArrowRight size={12} />
-        </button>
       </div>
 
       <div className="w-full flex-1 flex flex-col justify-center">

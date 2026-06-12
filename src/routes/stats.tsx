@@ -263,6 +263,47 @@ function Stats() {
     [activeResults],
   );
 
+  const allLevelsCompleted = completedLevels.length === 3;
+  const currentLevelCompleted = useMemo(() => {
+    return level ? completedLevels.includes(level) : false;
+  }, [level, completedLevels]);
+
+  const nextLevelToPractice = useMemo(() => {
+    if (!level) return null;
+    if (!currentLevelCompleted) return level;
+    const currentIndex = LEVELS.indexOf(level);
+    if (currentIndex !== -1 && currentIndex + 1 < LEVELS.length) {
+      return LEVELS[currentIndex + 1] as Level;
+    }
+    return null;
+  }, [level, currentLevelCompleted]);
+
+  const handleCTA = () => {
+    if (allLevelsCompleted) {
+      navigate({ to: "/" });
+    } else if (nextLevelToPractice) {
+      if (nextLevelToPractice !== level) {
+        useSession.getState().setLevel(nextLevelToPractice);
+        navigate({ to: "/level-intro" });
+      } else {
+        navigate({ to: "/practice" });
+      }
+    } else {
+      navigate({ to: "/setup" });
+    }
+  };
+
+  const ctaText = useMemo(() => {
+    if (allLevelsCompleted) return "Back to home";
+    if (nextLevelToPractice) {
+      if (nextLevelToPractice !== level) {
+        return `Continue to ${LEVEL_INFO[nextLevelToPractice].title}`;
+      }
+      return "Continue practicing";
+    }
+    return "Start practicing";
+  }, [allLevelsCompleted, nextLevelToPractice, level]);
+
   // GSAP: Entry animation
   useEffect(() => {
     let mounted = true;
@@ -352,6 +393,12 @@ function Stats() {
           <span dangerouslySetInnerHTML={{ __html: logoSvg("#141413", "#cc785c") }} />
           <span className="font-display text-xl font-medium tracking-tight text-ink">Resonant</span>
         </Link>
+        <button
+          onClick={() => navigate({ to: "/" })}
+          className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-hairline bg-white hover:bg-surface-soft shadow-sm uppercase tracking-wider font-semibold"
+        >
+          <ArrowLeft size={12} /> Back to home
+        </button>
       </header>
 
       <main className="px-4 md:px-12 py-8 md:py-16 max-w-7xl mx-auto space-y-6 md:space-y-8">
@@ -633,26 +680,11 @@ function Stats() {
         {/* CTA Buttons */}
         <section className="text-center pt-4 pb-4 stat-section">
           <div className="inline-flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-            {level ? (
-              <button
-                onClick={() => navigate({ to: "/practice" })}
-                className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center"
-              >
-                Continue practicing
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate({ to: "/setup" })}
-                className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center"
-              >
-                Start practicing
-              </button>
-            )}
             <button
-              onClick={() => navigate({ to: "/" })}
-              className="btn-secondary !h-14 !px-7 w-full sm:w-auto justify-center bg-white"
+              onClick={handleCTA}
+              className="btn-primary !h-14 !px-8 w-full sm:w-auto justify-center"
             >
-              Back to home
+              {ctaText}
             </button>
           </div>
         </section>

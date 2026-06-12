@@ -260,7 +260,16 @@ function Complete() {
           ) : !allAttempted ? (
             <>
               <button
-                onClick={() => navigate({ to: "/practice" })}
+                onClick={() => {
+                  const firstIncomplete = questions.findIndex((qItem) => {
+                    const r = results.find((res) => res.questionId === qItem.id);
+                    return !r || r.skipped || r.attempts === 0;
+                  });
+                  if (firstIncomplete !== -1) {
+                    useSession.getState().setCurrentQuestion(firstIncomplete);
+                  }
+                  navigate({ to: "/practice" });
+                }}
                 className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center"
               >
                 Continue practicing <ArrowRight size={18} className="ml-2" />

@@ -56,7 +56,7 @@ function LevelIntro() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center justify-center px-6 text-center relative overflow-hidden"
+      className="min-h-screen bg-surface-dark text-on-dark flex flex-col items-center px-6 pt-24 pb-12 md:py-12 text-center relative overflow-hidden"
     >
       <div className="absolute inset-0 pointer-events-none">
         <div
@@ -65,23 +65,24 @@ function LevelIntro() {
         />
       </div>
 
-      {/* Top left back button (failsafe in case of animation or other issues) */}
-      <button
-        onClick={() => navigate({ to: "/setup" })}
-        className="absolute top-6 left-6 text-xs text-on-dark-soft hover:text-on-dark transition-all duration-200 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold"
-      >
-        <ArrowLeft size={12} /> Change Level
-      </button>
+      {/* Top Actions Row */}
+      <div className="w-full max-w-2xl flex items-center justify-between mb-8 md:absolute md:top-8 md:left-1/2 md:-translate-x-1/2 md:mb-0 z-50">
+        <button
+          onClick={() => navigate({ to: "/setup" })}
+          className="text-xs text-on-dark-soft hover:text-on-dark transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold"
+        >
+          <ArrowLeft size={12} /> Change Level
+        </button>
 
-      {/* Top right skip button (failsafe in case of animation or other issues) */}
-      <button
-        onClick={() => navigate({ to: "/practice" })}
-        className="absolute top-6 right-6 text-xs text-on-dark-soft hover:text-on-dark transition-all duration-200 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold"
-      >
-        Skip <ArrowRight size={12} />
-      </button>
+        <button
+          onClick={() => navigate({ to: "/practice" })}
+          className="text-xs text-on-dark-soft hover:text-on-dark transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold"
+        >
+          Skip <ArrowRight size={12} />
+        </button>
+      </div>
 
-      <div className="relative max-w-2xl">
+      <div className="relative max-w-2xl my-auto py-4">
         <div className="li-step caption-up text-on-dark-soft mb-6">
           10 questions · Real scenarios
         </div>
@@ -93,10 +94,10 @@ function LevelIntro() {
           You've got this, {userName}.
         </p>
         <div className="flex flex-col items-center gap-4">
-          <div className="li-step">
+          <div className="li-step w-full flex justify-center">
             <button
               onClick={() => navigate({ to: "/practice" })}
-              className="h-14 px-10 text-sm text-on-dark hover:text-white transition-all duration-300 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:border-white/25 hover:-translate-y-0.5 inline-flex items-center justify-center group cursor-pointer"
+              className="h-14 px-10 text-sm text-on-dark hover:text-white transition-all duration-300 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 uppercase tracking-wider font-semibold shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:border-white/25 hover:-translate-y-0.5 inline-flex items-center justify-center group cursor-pointer w-full sm:w-auto"
             >
               {currentQuestion > 0 ? "Continue Practice" : "Begin Practice"}
               <ArrowRight

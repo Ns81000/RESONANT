@@ -140,48 +140,48 @@ function Complete() {
         )}
 
         {!allSkipped && (
-          <div className="cele flex justify-center gap-6 mb-14">
+          <div className="cele flex items-center justify-center gap-4 sm:gap-6 mb-10 md:mb-14 flex-wrap">
             <ScoreDial value={averages.clarity} label="Clarity" size={96} />
             <ScoreDial value={averages.grammar} label="Grammar" size={96} />
             <ScoreDial value={averages.confidence} label="Confidence" size={96} />
           </div>
         )}
 
-        <div className="cele flex flex-wrap items-center justify-center gap-3">
+        <div className="cele flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
           {allSkipped ? (
             <>
-              <button onClick={handlePracticeAgain} className="btn-primary !h-14 !px-8">
+              <button onClick={handlePracticeAgain} className="btn-primary !h-14 !px-8 w-full sm:w-auto">
                 Practice this level again <ArrowRight size={18} className="ml-2" />
               </button>
               <button
                 onClick={() => navigate({ to: "/" })}
-                className="text-sm text-on-dark-soft hover:text-on-dark transition py-2 px-4"
+                className="text-sm text-on-dark-soft hover:text-on-dark transition py-2 px-4 w-full sm:w-auto text-center"
               >
                 Back to home
               </button>
             </>
           ) : nextLevel ? (
             <>
-              <button onClick={handleNextLevel} className="btn-primary !h-14 !px-7">
+              <button onClick={handleNextLevel} className="btn-primary !h-14 !px-7 w-full sm:w-auto justify-center">
                 Continue to {LEVEL_INFO[nextLevel].title}
                 <ArrowRight size={18} className="ml-2" />
               </button>
-              <button onClick={handlePracticeAgain} className="btn-on-dark !h-14">
+              <button onClick={handlePracticeAgain} className="btn-on-dark !h-14 w-full sm:w-auto justify-center">
                 Practice this level again
               </button>
               <button
                 onClick={() => navigate({ to: "/" })}
-                className="text-sm text-on-dark-soft hover:text-on-dark transition py-2 px-4"
+                className="text-sm text-on-dark-soft hover:text-on-dark transition py-2 px-4 w-full sm:w-auto text-center"
               >
                 Back to home
               </button>
             </>
           ) : (
             <>
-              <button onClick={() => navigate({ to: "/" })} className="btn-primary !h-14 !px-8">
+              <button onClick={() => navigate({ to: "/" })} className="btn-primary !h-14 !px-8 w-full sm:w-auto justify-center">
                 Back to home <ArrowRight size={18} className="ml-2" />
               </button>
-              <button onClick={handlePracticeAgain} className="btn-on-dark !h-14">
+              <button onClick={handlePracticeAgain} className="btn-on-dark !h-14 w-full sm:w-auto justify-center">
                 Practice this level again
               </button>
             </>

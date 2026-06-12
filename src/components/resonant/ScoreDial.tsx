@@ -36,15 +36,16 @@ export function ScoreDial({ value, label, size = 120 }: Props) {
   const offset = C * (1 - animated / 10);
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="-rotate-90">
+    <div className="flex flex-col items-center gap-2 w-20 sm:w-24 md:w-28">
+      <div className="relative w-full aspect-square">
+        <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full -rotate-90">
           <circle
             cx={size / 2}
             cy={size / 2}
             r={r}
             fill="none"
-            stroke="var(--hairline)"
+            stroke="currentColor"
+            className="opacity-15"
             strokeWidth="6"
           />
           <circle
@@ -60,12 +61,13 @@ export function ScoreDial({ value, label, size = 120 }: Props) {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-display text-3xl text-ink" style={{ letterSpacing: "-0.02em" }}>
+          <span className="font-display text-2xl sm:text-3xl text-current" style={{ letterSpacing: "-0.02em" }}>
             {animated.toFixed(1)}
           </span>
         </div>
       </div>
-      <span className="caption-up text-muted-tone">{label}</span>
+      <span className="caption-up text-[10px] sm:text-xs text-muted-tone text-center">{label}</span>
     </div>
   );
 }
+

@@ -81,10 +81,10 @@ function Setup() {
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
       <Nav />
-      <main ref={containerRef} className="flex-1 flex items-center justify-center px-6 py-32">
-        <div className="w-full max-w-4xl">
+      <main ref={containerRef} className="flex-1 flex flex-col items-center px-6 pt-24 pb-12 md:py-32">
+        <div className="w-full max-w-4xl my-auto">
           {step === 1 ? (
-            <div className="text-center">
+            <div className="text-center py-4">
               <div className="setup-rise caption-up text-muted-tone mb-6">Step 01</div>
               <h1 className="setup-rise display-lg text-ink mb-8 max-w-2xl mx-auto">
                 What should we call you?
@@ -103,30 +103,30 @@ function Setup() {
                 <button
                   onClick={handleNameSubmit}
                   disabled={titleCase(nameInput).length < 2}
-                  className="btn-primary mt-6 !h-14 !px-7"
+                  className="btn-primary mt-6 !h-14 !px-7 w-full sm:w-auto"
                 >
                   Continue <ArrowRight size={18} className="ml-2" />
                 </button>
               </div>
             </div>
           ) : (
-            <div>
+            <div className="py-4">
               <button
                 onClick={() => setStep(1)}
-                className="setup-rise mb-8 btn-nav"
+                className="setup-rise mb-6 btn-nav"
                 aria-label="Back to previous step"
               >
                 <ArrowLeft size={12} /> Back
               </button>
-              <div className="setup-rise caption-up text-muted-tone mb-6">Step 02</div>
+              <div className="setup-rise caption-up text-muted-tone mb-4 mt-2">Step 02</div>
               <h1 className="setup-rise display-lg text-ink mb-3 max-w-3xl">
                 Welcome, {useSession.getState().userName || "friend"}.
               </h1>
-              <p className="setup-rise text-body mb-12 text-lg">
+              <p className="setup-rise text-body mb-8 md:mb-12 text-lg">
                 Choose where you are today. You can always change later.
               </p>
 
-              <div className="setup-rise grid md:grid-cols-3 gap-4 mb-10">
+              <div className="setup-rise grid md:grid-cols-3 gap-4 mb-8 md:mb-10">
                 {(["beginner", "intermediate", "advanced"] as Level[]).map((lvl, i) => {
                   const Icon = LEVEL_ICONS[lvl];
                   const isSelected = selected === lvl;
@@ -135,7 +135,7 @@ function Setup() {
                     <button
                       key={lvl}
                       onClick={() => setSelected(lvl)}
-                      className={`relative text-left p-7 rounded-xl border-2 transition-all overflow-hidden ${
+                      className={`relative text-left p-5 md:p-7 rounded-xl border-2 transition-all overflow-hidden ${
                         isSelected
                           ? "border-primary bg-surface-card shadow-lg -translate-y-1"
                           : "border-hairline bg-canvas hover:border-ink/30 hover:-translate-y-0.5"
@@ -146,7 +146,7 @@ function Setup() {
                           <Check size={12} /> done
                         </span>
                       )}
-                      <div className="flex items-start justify-between mb-5">
+                      <div className="flex items-start justify-between mb-4 md:mb-5">
                         <span
                           className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${isSelected ? "bg-primary text-on-primary" : "bg-surface-card text-primary"}`}
                         >
@@ -154,8 +154,8 @@ function Setup() {
                         </span>
                         <span className="caption-up text-muted-tone">Level 0{i + 1}</span>
                       </div>
-                      <div className="display-sm text-ink mb-2">{LEVEL_INFO[lvl].title}</div>
-                      <div className="text-sm text-body leading-relaxed mb-4">
+                      <div className="display-sm text-ink mb-1.5 md:mb-2">{LEVEL_INFO[lvl].title}</div>
+                      <div className="text-sm text-body leading-relaxed mb-3 md:mb-4">
                         {LEVEL_INFO[lvl].subtitle}
                       </div>
                       <div className="caption-up text-muted-tone">
@@ -178,7 +178,7 @@ function Setup() {
                 <button
                   onClick={handleLevelSubmit}
                   disabled={!selected}
-                  className="btn-primary !h-14 !px-8"
+                  className="btn-primary !h-14 !px-8 w-full sm:w-auto"
                 >
                   Begin <ArrowRight size={18} className="ml-2" />
                 </button>

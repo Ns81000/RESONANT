@@ -274,88 +274,99 @@ function Practice() {
 
       <main
         ref={stageRef}
-        className="flex-1 px-6 md:px-12 py-12 flex flex-col items-center relative"
+        className="flex-1 px-6 md:px-12 py-8 md:py-12 flex flex-col items-center relative"
       >
-        {/* Top-left navigation button */}
-        {((stage !== "RECORDING" || (stage === "RECORDING" && recordingState === "idle")) && stage !== "PROCESSING") && (
-          <div className="absolute top-6 left-6 md:left-12">
-            {stage === "RECORDING" ? (
-              <button
-                onClick={() => setStage("MODE")}
-                className="btn-nav"
-                aria-label="Back to mode selection"
-              >
-                <ArrowLeft size={12} /> Back to Mode
-              </button>
-            ) : stage === "MODE" ? (
-              <button
-                onClick={() => setStage("PROMPT")}
-                className="btn-nav"
-                aria-label="Back to prompt screen"
-              >
-                <ArrowLeft size={12} /> Back to Prompt
-              </button>
-            ) : stage === "FEEDBACK" ? (
-              <button
-                onClick={() => {
-                  if (currentQuestion > 0) {
-                    setCurrentQuestion(currentQuestion - 1);
-                    setStage("PROMPT");
-                  } else {
-                    navigate({ to: "/level-intro" });
-                  }
-                }}
-                className="btn-nav"
-                aria-label="Previous question or back"
-              >
-                <ArrowLeft size={12} /> {currentQuestion === 0 ? "Back" : "Previous"}
-              </button>
-            ) : // stage === "PROMPT"
-            currentQuestion > 0 ? (
-              <button
-                onClick={() => {
-                  setCurrentQuestion(currentQuestion - 1);
-                  setStage("PROMPT");
-                }}
-                className="btn-nav"
-                aria-label="Previous question"
-              >
-                <ArrowLeft size={12} /> Previous
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate({ to: "/level-intro" })}
-                className="btn-nav"
-                aria-label="Back to level introduction"
-              >
-                <ArrowLeft size={12} /> Back
-              </button>
-            )}
+        {/* Top Actions Row */}
+        {stage !== "PROCESSING" && (
+          <div className="w-full max-w-3xl flex items-center justify-between mb-6 md:mb-0 md:absolute md:top-6 md:left-0 md:right-0 md:px-12 md:max-w-none pointer-events-none">
+            {/* Left side: Back/Prev navigation */}
+            <div className="pointer-events-auto">
+              {(stage !== "RECORDING" || (stage === "RECORDING" && recordingState === "idle")) ? (
+                stage === "RECORDING" ? (
+                  <button
+                    onClick={() => setStage("MODE")}
+                    className="btn-nav"
+                    aria-label="Back to mode selection"
+                  >
+                    <ArrowLeft size={12} /> Back to Mode
+                  </button>
+                ) : stage === "MODE" ? (
+                  <button
+                    onClick={() => setStage("PROMPT")}
+                    className="btn-nav"
+                    aria-label="Back to prompt screen"
+                  >
+                    <ArrowLeft size={12} /> Back to Prompt
+                  </button>
+                ) : stage === "FEEDBACK" ? (
+                  <button
+                    onClick={() => {
+                      if (currentQuestion > 0) {
+                        setCurrentQuestion(currentQuestion - 1);
+                        setStage("PROMPT");
+                      } else {
+                        navigate({ to: "/level-intro" });
+                      }
+                    }}
+                    className="btn-nav"
+                    aria-label="Previous question or back"
+                  >
+                    <ArrowLeft size={12} /> {currentQuestion === 0 ? "Back" : "Previous"}
+                  </button>
+                ) : // stage === "PROMPT"
+                currentQuestion > 0 ? (
+                  <button
+                    onClick={() => {
+                      setCurrentQuestion(currentQuestion - 1);
+                      setStage("PROMPT");
+                    }}
+                    className="btn-nav"
+                    aria-label="Previous question"
+                  >
+                    <ArrowLeft size={12} /> Previous
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate({ to: "/level-intro" })}
+                    className="btn-nav"
+                    aria-label="Back to level introduction"
+                  >
+                    <ArrowLeft size={12} /> Back
+                  </button>
+                )
+              ) : (
+                <div className="w-1" />
+              )}
+            </div>
+
+            {/* Right side: Skip button */}
+            <div className="pointer-events-auto">
+              {stage === "PROMPT" ? (
+                <button
+                  onClick={handleSkip}
+                  className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface-card hover:bg-surface-cream-strong uppercase tracking-wider font-semibold"
+                  aria-label="Skip this question"
+                >
+                  Skip <ChevronRight size={12} />
+                </button>
+              ) : (
+                <div className="w-1" />
+              )}
+            </div>
           </div>
         )}
 
-        {/* Top-right skip button */}
-        {stage === "PROMPT" && (
-          <div className="absolute top-6 right-6 md:right-12">
-            <button
-              onClick={handleSkip}
-              className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface-card hover:bg-surface-cream-strong uppercase tracking-wider font-semibold"
-              aria-label="Skip this question"
-            >
-              Skip <ChevronRight size={12} />
-            </button>
-          </div>
-        )}
-        <div className="w-full max-w-3xl">
+        {/* Content Wrapper */}
+        <div className="w-full max-w-3xl my-auto py-4">
           {stage === "PROMPT" && (
-            <div className="text-center mt-8">
+            <div className="text-center">
               <div className="stage-in caption-up text-muted-tone mb-6">{q.category}</div>
               <h1 className="stage-in display-lg text-ink mb-10 leading-tight">{prompt}</h1>
               <div className="stage-in inline-flex items-center gap-2 badge-neutral mb-12">
                 <span>⏱</span> Up to {q.timeLimitSeconds} seconds
               </div>
               <div className="stage-in flex flex-wrap items-center justify-center gap-3">
-                <button onClick={() => setStage("MODE")} className="btn-primary !h-14 !px-8">
+                <button onClick={() => setStage("MODE")} className="btn-primary !h-14 !px-8 w-full sm:w-auto">
                   Choose how to answer <ArrowRight size={18} className="ml-2" />
                 </button>
               </div>
@@ -363,7 +374,7 @@ function Practice() {
           )}
 
           {stage === "MODE" && (
-            <div className="mt-4">
+            <div>
               <div className="stage-in caption-up text-muted-tone mb-4">{q.category}</div>
               <h2 className="stage-in display-md text-ink mb-10 leading-tight">{prompt}</h2>
 
@@ -384,7 +395,7 @@ function Practice() {
               >
                 <button
                   onClick={() => handleModeSelect("free")}
-                  className="text-left p-6 rounded-xl border-2 border-hairline hover:border-primary hover:-translate-y-0.5 transition-all bg-canvas"
+                  className="text-left p-5 md:p-6 rounded-xl border-2 border-hairline hover:border-primary hover:-translate-y-0.5 transition-all bg-canvas"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <span className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center">
@@ -400,7 +411,7 @@ function Practice() {
                 {providedText && (
                   <button
                     onClick={() => handleModeSelect("scripted")}
-                    className="text-left p-6 rounded-xl border-2 border-hairline hover:border-primary hover:-translate-y-0.5 transition-all bg-canvas"
+                    className="text-left p-5 md:p-6 rounded-xl border-2 border-hairline hover:border-primary hover:-translate-y-0.5 transition-all bg-canvas"
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <span className="w-10 h-10 rounded-full bg-surface-dark text-on-dark flex items-center justify-center">
@@ -421,7 +432,7 @@ function Practice() {
           )}
 
           {stage === "RECORDING" && (
-            <div className="mt-4 flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center">
               <div className="stage-in caption-up text-primary mb-4 flex items-center gap-2">
                 {recordingState === "recording" ? (
                   <><span className="w-2 h-2 rounded-full bg-error animate-pulse" /> Recording</>
@@ -470,11 +481,11 @@ function Practice() {
               )}
 
               {recordingState === "done" && (
-                <div className="stage-in flex gap-4 mt-6">
-                  <button onClick={() => setRecordingState("idle")} className="btn-nav py-3 px-6 text-sm">
+                <div className="stage-in flex flex-col sm:flex-row gap-3 mt-6 w-full sm:w-auto items-center justify-center">
+                  <button onClick={() => setRecordingState("idle")} className="btn-nav py-3 px-6 text-sm w-full sm:w-auto">
                     Restart
                   </button>
-                  <button onClick={handleSubmitRecording} className="text-sm font-semibold tracking-wide uppercase px-6 py-3 rounded-full bg-ink hover:bg-black text-white transition-colors shadow-md">
+                  <button onClick={handleSubmitRecording} className="text-sm font-semibold tracking-wide uppercase px-6 py-3 rounded-full bg-ink hover:bg-black text-white transition-colors shadow-md w-full sm:w-auto">
                     Submit Response
                   </button>
                 </div>
@@ -613,16 +624,16 @@ function FeedbackView({
         </p>
       </div>
 
-      <div className="stage-in flex flex-wrap items-center justify-between gap-4 pt-4">
+      <div className="stage-in flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-hairline-soft">
         <div className="text-sm text-muted-tone">
           Attempt {attempts}
           {attempts >= 3 && " · you can advance any time"}
         </div>
-        <div className="flex gap-3">
-          <button onClick={onRetry} className="btn-nav py-3 px-6 text-sm">
-            <RotateCw size={16} /> Try again
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <button onClick={onRetry} className="btn-nav py-3 px-6 text-sm w-full sm:w-auto justify-center">
+            <RotateCw size={16} className="mr-1.5" /> Try again
           </button>
-          <button onClick={onNext} disabled={!canAdvance} className="btn-primary">
+          <button onClick={onNext} disabled={!canAdvance} className="btn-primary w-full sm:w-auto justify-center">
             {isLast ? "Finish level" : "Next question"} <ArrowRight size={18} className="ml-2" />
           </button>
         </div>

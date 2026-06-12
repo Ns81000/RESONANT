@@ -234,7 +234,7 @@ function Practice() {
     // Allow skipping after at least one attempt or from prompt stage
     pushResult({
       questionId: q.id,
-      attempts: attempts,
+      attempts: 0,
       bestScores: evalResult?.scores ?? { clarity: 0, grammar: 0, confidence: 0 },
       passed: false,
       skipped: true,

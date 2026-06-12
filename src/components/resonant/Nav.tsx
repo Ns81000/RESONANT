@@ -29,13 +29,13 @@ export function Nav({ variant = "light" }: NavProps) {
         {userName && (
           <Link
             to="/stats"
-            className={`inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-200 text-xs font-semibold uppercase tracking-wider shadow-sm ${
               isDark
-                ? "text-on-dark-soft hover:text-primary"
-                : "text-muted-tone hover:text-primary"
+                ? "text-on-dark-soft border-white/10 bg-white/5 hover:bg-white/10 hover:text-on-dark"
+                : "text-muted-tone border-hairline bg-white hover:bg-surface-soft hover:text-ink hover:shadow"
             }`}
           >
-            <BarChart2 size={14} />
+            <BarChart2 size={13} />
             <span className="hidden sm:inline">Stats</span>
           </Link>
         )}

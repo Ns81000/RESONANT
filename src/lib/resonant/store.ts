@@ -35,7 +35,7 @@ const upsertResult = (list: QuestionResult[], r: QuestionResult): QuestionResult
         confidence: Math.max(existing.bestScores.confidence, r.bestScores.confidence),
       },
       passed: existing.passed || r.passed,
-      skipped: r.skipped !== undefined ? (r.skipped && !!existing.skipped) : !!existing.skipped,
+      skipped: r.skipped !== undefined ? r.skipped : !!existing.skipped,
     };
     return [...without, merged];
   }
@@ -71,12 +71,7 @@ export const useSession = create<SessionState>()(
           }
           const allResults = { ...s.allResults };
           if (s.level && s.results.length > 0) {
-            const existing = allResults[s.level] ?? [];
-            let merged = [...existing];
-            for (const r of s.results) {
-              merged = upsertResult(merged, r);
-            }
-            allResults[s.level] = merged;
+            allResults[s.level] = s.results;
           }
           const restored = allResults[level] ?? [];
           const questions = questionsForLevel(level);
@@ -138,6 +133,28 @@ export const useSession = create<SessionState>()(
       storage: createJSONStorage(() =>
         typeof window !== "undefined" ? localStorage : (undefined as unknown as Storage),
       ),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Sanitize results
+          state.results = state.results.map((r) => ({
+            ...r,
+            attempts: r.attempts > 100 ? 1 : r.attempts,
+          }));
+
+          // Sanitize allResults
+          const sanitizedAll: AllResults = {};
+          for (const key of Object.keys(state.allResults) as Level[]) {
+            const list = state.allResults[key];
+            if (list) {
+              sanitizedAll[key] = list.map((r) => ({
+                ...r,
+                attempts: r.attempts > 100 ? 1 : r.attempts,
+              }));
+            }
+          }
+          state.allResults = sanitizedAll;
+        }
+      },
     },
   ),
 );

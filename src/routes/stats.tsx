@@ -9,6 +9,9 @@ import {
   Trophy,
   Target,
   TrendingUp,
+  Trash2,
+  Download,
+  Upload,
 } from "lucide-react";
 import { useSession } from "@/lib/resonant/store";
 import { LEVEL_INFO, questionsForLevel, QUESTIONS } from "@/lib/resonant/questions";
@@ -191,10 +194,93 @@ function Stats() {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
   const navigate = useNavigate();
-  const { userName, level, results, allResults, completedLevels } = useSession();
+  const { userName, level, results, allResults, completedLevels, resetAll } = useSession();
   const [activeTab, setActiveTab] = useState<Level>(level ?? "beginner");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleExport = () => {
+    try {
+      const data = {
+        userName,
+        level,
+        currentQuestion: useSession.getState().currentQuestion,
+        results,
+        completedLevels,
+        allResults,
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `resonant-progress-${userName.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to export progress.");
+    }
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const parsed = JSON.parse(content);
+        
+        if (
+          typeof parsed !== "object" ||
+          parsed === null ||
+          typeof parsed.userName !== "string"
+        ) {
+          throw new Error("Invalid format: userName is required.");
+        }
+
+        const rawResults = Array.isArray(parsed.results) ? parsed.results : [];
+        const rawAllResults = typeof parsed.allResults === "object" && parsed.allResults !== null ? parsed.allResults : {};
+
+        const sanitizeResult = (r: any) => ({
+          ...r,
+          attempts: typeof r.attempts === "number" && r.attempts > 100 ? 1 : (r.attempts ?? 0),
+        });
+
+        const sanitizedResults = rawResults.map(sanitizeResult);
+        const sanitizedAllResults: Record<string, any> = {};
+        for (const k of Object.keys(rawAllResults)) {
+          if (Array.isArray(rawAllResults[k])) {
+            sanitizedAllResults[k] = rawAllResults[k].map(sanitizeResult);
+          }
+        }
+
+        useSession.setState({
+          userName: parsed.userName,
+          level: parsed.level ?? null,
+          currentQuestion: typeof parsed.currentQuestion === "number" ? parsed.currentQuestion : 0,
+          results: sanitizedResults,
+          completedLevels: Array.isArray(parsed.completedLevels) ? parsed.completedLevels : [],
+          allResults: sanitizedAllResults,
+        });
+
+        window.location.href = "/stats";
+      } catch (err) {
+        console.error(err);
+        alert(err instanceof Error ? err.message : "Failed to import progress file. Make sure it is a valid Resonant progress backup.");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDeleteAll = () => {
+    resetAll();
+    setDeleteConfirmOpen(false);
+    window.location.href = "/";
+  };
 
   const getResultsForLevel = useCallback(
     (lvl: Level): QuestionResult[] => {
@@ -551,6 +637,41 @@ function Stats() {
           </div>
         </div>
 
+        {/* DATA MANAGEMENT PANEL */}
+        <div className="bg-white border border-hairline rounded-2xl p-5 md:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 shadow-[0_4px_20px_rgba(20,20,19,0.015)] stat-section">
+          <div>
+            <h3 className="font-display text-base font-semibold text-ink">Manage your progress</h3>
+            <p className="text-xs text-muted-soft mt-1">Export your scores as a backup, load an existing backup, or clear your profile.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={handleExport}
+              className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-hairline bg-white hover:bg-surface-soft shadow-sm uppercase tracking-wider font-semibold cursor-pointer"
+            >
+              <Download size={13} /> Export data
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs text-muted-tone hover:text-ink transition-all duration-200 flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-hairline bg-white hover:bg-surface-soft shadow-sm uppercase tracking-wider font-semibold cursor-pointer"
+            >
+              <Upload size={13} /> Import data
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImport}
+              accept=".json"
+              className="hidden"
+            />
+            <button
+              onClick={() => setDeleteConfirmOpen(true)}
+              className="text-xs text-error hover:bg-error/5 hover:border-error/30 transition-all duration-200 flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-error/10 bg-error/5 uppercase tracking-wider font-semibold cursor-pointer"
+            >
+              <Trash2 size={13} /> Reset progress
+            </button>
+          </div>
+        </div>
+
         {/* BOTTOM SECTION: Tabs switcher, Question Breakdown & Metrics */}
         <div className="bg-white border border-hairline rounded-2xl p-4 sm:p-6 md:p-8 shadow-[0_4px_20px_rgba(20,20,19,0.015)] stat-section">
           
@@ -719,6 +840,40 @@ function Stats() {
             </button>
           </div>
         </section>
+      {/* DELETE CONFIRMATION MODAL */}
+      {deleteConfirmOpen && (
+        <div
+          className="fixed inset-0 bg-surface-dark/40 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+          onClick={() => setDeleteConfirmOpen(false)}
+        >
+          <div
+            className="bg-canvas rounded-2xl p-8 max-w-md w-full text-center shadow-2xl animate-scale-in border border-hairline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-error/10 flex items-center justify-center">
+              <Trash2 size={22} className="text-error" />
+            </div>
+            <h3 className="display-sm text-ink mb-3 font-display">Reset all progress?</h3>
+            <p className="text-sm text-body mb-8 leading-relaxed">
+              This will permanently delete your profile name, average scores, and all completed scenario attempts. <strong>This action cannot be undone.</strong>
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={handleDeleteAll}
+                className="w-full h-12 rounded-lg bg-error text-on-primary font-semibold hover:bg-error/90 transition cursor-pointer"
+              >
+                Yes, delete everything
+              </button>
+              <button
+                onClick={() => setDeleteConfirmOpen(false)}
+                className="w-full h-12 rounded-lg border border-hairline bg-white hover:bg-surface-soft text-body font-semibold transition cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </main>
     </div>
   );

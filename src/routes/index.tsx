@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { Nav } from "@/components/resonant/Nav";
 import { useSession } from "@/lib/resonant/store";
-import { LEVEL_INFO } from "@/lib/resonant/questions";
+import { LEVEL_INFO, questionsForLevel } from "@/lib/resonant/questions";
 import logoSvg from "@/components/resonant/logo";
 
 export const Route = createFileRoute("/")({
@@ -31,7 +31,14 @@ function Landing() {
   const completedLevels = useSession((s) => s.completedLevels);
 
   const hasSession = hydrated && !!userName && !!level;
-  const currentLevelCompleted = hasSession && completedLevels.includes(level!);
+  const currentLevelCompleted = useMemo(() => {
+    if (!hasSession || !level || !completedLevels.includes(level)) return false;
+    const questions = questionsForLevel(level);
+    return questions.every((q) => {
+      const r = results.find((res) => res.questionId === q.id);
+      return r && r.passed;
+    });
+  }, [hasSession, level, completedLevels, results]);
 
   const nextLevel = useMemo(() => {
     if (!level) return null;

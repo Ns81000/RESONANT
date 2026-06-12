@@ -55,6 +55,18 @@ export const useSession = create<SessionState>()(
       setLevel: (level) =>
         set((s) => {
           if (s.level === level) {
+            const questions = questionsForLevel(level);
+            const allQuestionsHaveResult = questions.every((q) =>
+              s.results.some((res) => res.questionId === q.id)
+            );
+            if (allQuestionsHaveResult) {
+              const firstIncompleteIndex = questions.findIndex((q) => {
+                const r = s.results.find((res) => res.questionId === q.id);
+                return !r || !r.passed;
+              });
+              const currentQuestion = firstIncompleteIndex !== -1 ? firstIncompleteIndex : 0;
+              return { currentQuestion };
+            }
             return {};
           }
           const allResults = { ...s.allResults };
@@ -68,10 +80,11 @@ export const useSession = create<SessionState>()(
           }
           const restored = allResults[level] ?? [];
           const questions = questionsForLevel(level);
-          const firstUnansweredIndex = questions.findIndex(
-            (q) => !restored.some((r) => r.questionId === q.id)
-          );
-          const currentQuestion = firstUnansweredIndex !== -1 ? firstUnansweredIndex : 0;
+          const firstIncompleteIndex = questions.findIndex((q) => {
+            const r = restored.find((res) => res.questionId === q.id);
+            return !r || !r.passed;
+          });
+          const currentQuestion = firstIncompleteIndex !== -1 ? firstIncompleteIndex : 0;
           return {
             level,
             currentQuestion,

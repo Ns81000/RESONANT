@@ -277,7 +277,7 @@ function Complete() {
                   onClick={() => {
                     const firstIncomplete = questions.findIndex((qItem) => {
                       const r = results.find((res) => res.questionId === qItem.id);
-                      return !r || r.skipped || r.attempts === 0;
+                      return !r || !r.passed;
                     });
                     if (firstIncomplete !== -1) {
                       useSession.getState().setCurrentQuestion(firstIncomplete);
@@ -303,7 +303,7 @@ function Complete() {
                 onClick={() => {
                   const firstIncomplete = questions.findIndex((qItem) => {
                     const r = results.find((res) => res.questionId === qItem.id);
-                    return !r || r.skipped || r.attempts === 0;
+                    return !r || !r.passed;
                   });
                   if (firstIncomplete !== -1) {
                     useSession.getState().setCurrentQuestion(firstIncomplete);

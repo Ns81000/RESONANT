@@ -211,6 +211,13 @@ function Practice() {
 
       if (allFinished) {
         completeLevel(level);
+        const firstIncomplete = questions.findIndex((qItem) => {
+          const r = currentResults.find((res) => res.questionId === qItem.id);
+          return !r || !r.passed;
+        });
+        if (firstIncomplete !== -1) {
+          useSession.getState().setCurrentQuestion(firstIncomplete);
+        }
       }
       navigate({ to: "/complete" });
     } else {

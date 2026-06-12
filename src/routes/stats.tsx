@@ -263,10 +263,27 @@ function Stats() {
     [activeResults],
   );
 
-  const allLevelsCompleted = completedLevels.length === 3;
   const currentLevelCompleted = useMemo(() => {
-    return level ? completedLevels.includes(level) : false;
-  }, [level, completedLevels]);
+    if (!level || !completedLevels.includes(level)) return false;
+    const activeResults = getResultsForLevel(level);
+    const questions = questionsForLevel(level);
+    return questions.every((q) => {
+      const r = activeResults.find((res) => res.questionId === q.id);
+      return r && r.passed;
+    });
+  }, [level, completedLevels, getResultsForLevel]);
+
+  const allLevelsCompleted = useMemo(() => {
+    if (completedLevels.length < 3) return false;
+    return LEVELS.every((lvl) => {
+      const r = getResultsForLevel(lvl);
+      const questions = questionsForLevel(lvl);
+      return questions.every((q) => {
+        const res = r.find((x) => x.questionId === q.id);
+        return res && res.passed;
+      });
+    });
+  }, [completedLevels, getResultsForLevel]);
 
   const nextLevelToPractice = useMemo(() => {
     if (!level) return null;
@@ -284,8 +301,26 @@ function Stats() {
     } else if (nextLevelToPractice) {
       if (nextLevelToPractice !== level) {
         useSession.getState().setLevel(nextLevelToPractice);
+        navigate({ to: "/level-intro" });
+      } else {
+        if (level) {
+          const activeQuestions = questionsForLevel(level);
+          const activeResults = getResultsForLevel(level);
+          const allQuestionsHaveResult = activeQuestions.every((qItem) =>
+            activeResults.some((r) => r.questionId === qItem.id)
+          );
+          if (allQuestionsHaveResult) {
+            const firstIncomplete = activeQuestions.findIndex((qItem) => {
+              const r = activeResults.find((res) => res.questionId === qItem.id);
+              return !r || !r.passed;
+            });
+            if (firstIncomplete !== -1) {
+              useSession.getState().setCurrentQuestion(firstIncomplete);
+            }
+          }
+        }
+        navigate({ to: "/practice" });
       }
-      navigate({ to: "/level-intro" });
     } else {
       navigate({ to: "/setup" });
     }

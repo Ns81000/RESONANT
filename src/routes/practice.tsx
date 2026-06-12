@@ -193,10 +193,11 @@ function Practice() {
     setEvalResult(null);
     setMode(null);
     if (currentQuestion + 1 >= totalQuestions) {
-      // Don't mark the level as completed if they skipped all questions
+      // Don't mark the level as completed if they skipped all questions without trying
       const currentResults = useSession.getState().results;
       const allSkipped =
-        currentResults.length >= totalQuestions && currentResults.every((r) => r.skipped);
+        currentResults.length >= totalQuestions &&
+        currentResults.every((r) => r.skipped && r.attempts === 0);
 
       if (!allSkipped) {
         completeLevel(level);

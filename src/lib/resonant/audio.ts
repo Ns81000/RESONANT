@@ -88,7 +88,21 @@ export async function recordAudio(opts: {
 
 async function downsampleToWav(blob: Blob, ctx: AudioContext, targetRate: number): Promise<Blob> {
   const arrayBuffer = await blob.arrayBuffer();
-  const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
+  let decoded: AudioBuffer;
+  try {
+    decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
+  } catch (err) {
+    decoded = await new Promise<AudioBuffer>((resolve, reject) => {
+      const p = ctx.decodeAudioData(
+        arrayBuffer.slice(0),
+        resolve,
+        (e) => reject(e || new Error("Failed to decode audio data"))
+      );
+      if (p && typeof (p as any).catch === "function") {
+        (p as any).catch(reject);
+      }
+    });
+  }
   const duration = decoded.duration;
   const offline = new OfflineAudioContext(1, Math.ceil(duration * targetRate), targetRate);
   const src = offline.createBufferSource();

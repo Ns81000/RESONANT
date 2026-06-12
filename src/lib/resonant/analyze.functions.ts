@@ -87,7 +87,7 @@ function nextStartIndex(len: number) {
 }
 
 async function callGemini(apiKey: string, body: unknown): Promise<Response> {
-  const model = "gemini-2.5-flash";
+  const model = "gemini-3.1-flash-lite";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   return fetch(url, {
     method: "POST",

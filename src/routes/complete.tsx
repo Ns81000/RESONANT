@@ -19,8 +19,9 @@ function Complete() {
   const ref = useRef<HTMLDivElement>(null);
 
   const averages = useMemo(() => {
-    if (!results.length) return { clarity: 0, grammar: 0, confidence: 0 };
-    const sum = results.reduce(
+    const attempted = results.filter((r) => r.attempts > 0);
+    if (!attempted.length) return { clarity: 0, grammar: 0, confidence: 0 };
+    const sum = attempted.reduce(
       (acc, r) => ({
         clarity: acc.clarity + r.bestScores.clarity,
         grammar: acc.grammar + r.bestScores.grammar,
@@ -29,14 +30,14 @@ function Complete() {
       { clarity: 0, grammar: 0, confidence: 0 },
     );
     return {
-      clarity: sum.clarity / results.length,
-      grammar: sum.grammar / results.length,
-      confidence: sum.confidence / results.length,
+      clarity: sum.clarity / attempted.length,
+      grammar: sum.grammar / attempted.length,
+      confidence: sum.confidence / attempted.length,
     };
   }, [results]);
 
   const allSkipped = useMemo(() => {
-    return results.length > 0 && results.every((r) => r.skipped);
+    return results.length > 0 && results.every((r) => r.skipped && r.attempts === 0);
   }, [results]);
 
   useEffect(() => {

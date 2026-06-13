@@ -19,6 +19,7 @@
   <img src="https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Google%20Gemini-8E75C2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Google Gemini API" />
   <img src="https://img.shields.io/badge/TanStack%20Start-FF4154?style=for-the-badge&logo=reactquery&logoColor=white" alt="TanStack Start" />
+  <img src="https://img.shields.io/badge/License-MIT-cc785c?style=for-the-badge" alt="MIT License" />
 </p>
 
 ---
@@ -288,3 +289,9 @@ Resonant features a curated, editorial-grade styling palette that aligns with pr
 *   **Color Palette**: Harmonious selection of warm off-white cream backgrounds (`#faf9f5`), charcoal active ink accents (`#141413`), and warm coral primary themes (`#cc785c`).
 *   **Typography**: Clean sans-serif headings paired with elegant serif text blocks (`Cormorant Garamond`) to elevate the user experience.
 *   **Micro-Animations**: Uses customized float animations on graphic vector logos, breathing pulsing states during audio analysis, and GSAP sequence staggers for smooth slide transitions between recording stages.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](file:///c:/Users/Ns8pc/Music/RESONANT/LICENSE) file for details.

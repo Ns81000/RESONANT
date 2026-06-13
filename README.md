@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20x%3D%2225%22%20y%3D%2260%22%20width%3D%2212%22%20height%3D%2212%22%20rx%3D%223%22%20fill%3D%22%23141413%22%3E%3C%2Frect%3E%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%2212%22%20height%3D%2212%22%20rx%3D%223%22%20fill%3D%22%23141413%22%3E%3C%2Frect%3E%3Crect%20x%3D%2265%22%20y%3D%2230%22%20width%3D%2212%22%20height%3D%2212%22%20rx%3D%223%22%20fill%3D%22%23cc785c%22%3E%3C%2Frect%3E%3C%2Fsvg%3E" width="80" height="80" alt="Resonant Logo" />
+  <img src="logo.svg" width="80" height="80" alt="Resonant Logo" />
 </p>
 
 <h1 align="center">RESONANT</h1>

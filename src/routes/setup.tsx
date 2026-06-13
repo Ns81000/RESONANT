@@ -44,6 +44,10 @@ function Setup() {
       animationTimeout = setTimeout(() => {
         if (!mounted || !containerRef.current) return;
 
+        // Only run animation if target elements exist in the DOM to avoid warnings
+        const elements = containerRef.current.querySelectorAll(".setup-rise");
+        if (elements.length === 0) return;
+
         animationContext = gsap.context(() => {
           gsap.from(".setup-rise", {
             y: 24,
@@ -52,7 +56,7 @@ function Setup() {
             stagger: 0.08,
             ease: "power3.out",
           });
-        }, containerRef);
+        }, containerRef.current);
       }, 0);
     })();
 

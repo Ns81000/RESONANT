@@ -65,10 +65,17 @@ function Practice() {
   // animate stage transitions
   useEffect(() => {
     let mounted = true;
+    let ctx: any = null;
+
     (async () => {
       const { gsap } = await import("gsap");
       if (!mounted || !stageRef.current) return;
-      const ctx = gsap.context(() => {
+
+      // Only run animation if target elements exist in the DOM to avoid warnings
+      const elements = stageRef.current.querySelectorAll(".stage-in");
+      if (elements.length === 0) return;
+
+      ctx = gsap.context(() => {
         gsap.from(".stage-in", {
           opacity: 0,
           y: 20,
@@ -76,11 +83,17 @@ function Practice() {
           stagger: 0.07,
           ease: "power3.out",
         });
-      }, stageRef);
-      return () => ctx.revert();
+      }, stageRef.current);
+
+      // Revert immediately if unmounted during the async import/initialization
+      if (!mounted && ctx) {
+        ctx.revert();
+      }
     })();
+
     return () => {
       mounted = false;
+      if (ctx) ctx.revert();
     };
   }, [stage, currentQuestion]);
 

@@ -29,6 +29,11 @@ function LevelIntro() {
     (async () => {
       const { gsap } = await import("gsap");
       if (!mounted || !containerRef.current) return;
+
+      // Only run animation if target elements exist in the DOM to avoid warnings
+      const elements = containerRef.current.querySelectorAll(".li-step");
+      if (elements.length === 0) return;
+
       animationContext = gsap.context(() => {
         gsap.from(".li-step", {
           y: 24,
@@ -37,7 +42,12 @@ function LevelIntro() {
           stagger: 0.18,
           ease: "power3.out",
         });
-      }, containerRef);
+      }, containerRef.current);
+
+      // Revert immediately if unmounted during the async import/initialization
+      if (!mounted && animationContext) {
+        animationContext.revert();
+      }
     })();
 
     return () => {

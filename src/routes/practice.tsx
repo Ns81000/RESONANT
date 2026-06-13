@@ -18,7 +18,7 @@ import { recordAudio, blobToBase64 } from "@/lib/resonant/audio";
 import { analyzeSpeech } from "@/lib/resonant/analyze.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { RecordButton } from "@/components/resonant/RecordButton";
-import { OrbVisualizer } from "@/components/resonant/OrbVisualizer";
+import { SiriWaveVisualizer } from "@/components/resonant/SiriWaveVisualizer";
 import { ScoreDial } from "@/components/resonant/ScoreDial";
 import type { EvaluationResponse } from "@/lib/resonant/types";
 import logoSvg from "@/components/resonant/logo";
@@ -499,7 +499,17 @@ function Practice() {
                 </div>
               )}
 
-              <div className="stage-in mb-4">
+              {recordingState !== "done" && (
+                <div className="stage-in w-full mb-2 flex justify-center">
+                  <SiriWaveVisualizer
+                    level={audioLevel}
+                    active={recordingState === "recording"}
+                    height={120}
+                  />
+                </div>
+              )}
+
+              <div className="stage-in mb-6">
                 <RecordButton
                   state={recordingState}
                   audioLevel={audioLevel}

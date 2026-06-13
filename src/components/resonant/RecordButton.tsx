@@ -1,5 +1,4 @@
 import { Mic, Square, Check } from "lucide-react";
-import { useEffect, useRef } from "react";
 
 interface Props {
   state: "idle" | "recording" | "done" | "processing";
@@ -7,53 +6,15 @@ interface Props {
   onClick: () => void;
 }
 
-export function RecordButton({ state, audioLevel = 0, onClick }: Props) {
-  const size = 80;
-  
-  // We use GSAP to animate ripples if recording
-  const ripplesRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    let mounted = true;
-    let ctx: gsap.Context | null = null;
-    
-    const animateRipples = async () => {
-      if (state !== "recording" || !ripplesRef.current) return;
-      const { gsap } = await import("gsap");
-      if (!mounted) return;
-      
-      ctx = gsap.context(() => {
-        // Animate the ripples based on audio level
-        const scale = 1 + (audioLevel / 100) * 1.5; // Max scale 2.5
-        gsap.to(".audio-ripple", {
-          scale: scale,
-          opacity: Math.max(0.1, 0.4 - (audioLevel / 100) * 0.3),
-          duration: 0.15,
-          ease: "power2.out",
-          stagger: 0.05
-        });
-      }, ripplesRef);
-    };
-    
-    animateRipples();
-    
-    return () => {
-      mounted = false;
-      if (ctx) ctx.revert();
-    };
-  }, [audioLevel, state]);
+export function RecordButton({ state, onClick }: Props) {
+  const size = 80; // Button diameter
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size * 2.5, height: size * 2.5 }}>
-      {/* Ripples container */}
-      {state === "recording" && (
-        <div ref={ripplesRef} className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="audio-ripple absolute rounded-full bg-error" style={{ width: size, height: size }} />
-          <div className="audio-ripple absolute rounded-full bg-error" style={{ width: size * 1.1, height: size * 1.1, opacity: 0.2 }} />
-          <div className="audio-ripple absolute rounded-full bg-error" style={{ width: size * 1.2, height: size * 1.2, opacity: 0.1 }} />
-        </div>
-      )}
-
+    <div
+      className="relative inline-flex items-center justify-center transition-all duration-300"
+      style={{ width: size, height: size }}
+    >
+      {/* Main record button */}
       <button
         onClick={onClick}
         disabled={state === "processing"}
@@ -71,8 +32,8 @@ export function RecordButton({ state, audioLevel = 0, onClick }: Props) {
                   : "var(--muted, #94a3b8)",
           boxShadow:
             state === "recording"
-              ? "0 0 0 6px color-mix(in srgb, var(--primary) 18%, transparent), 0 10px 28px -10px rgba(20,20,19,0.45)"
-              : "0 10px 28px -10px rgba(204,120,92,0.55)",
+              ? "0 0 0 6px color-mix(in srgb, var(--primary) 18%, transparent), 0 8px 24px -8px rgba(20,20,19,0.3)"
+              : "0 8px 24px -8px rgba(204,120,92,0.45)",
         }}
         aria-label={
           state === "idle"

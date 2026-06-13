@@ -29,38 +29,43 @@ const EvalSchema = z.object({
   passed: z.boolean(),
 });
 
-function buildPrompt(level: Level, prompt: string, mode: string, name: string, timeLimit: number) {
-  return `You are Resonant Coach — a warm, precise communication trainer for non-native English speakers in corporate settings.
+function buildSystemInstruction() {
+  return `You are Resonant Coach — a highly professional, direct, and candid communication trainer for non-native English speakers in corporate settings. Your coaching style is constructive, objective, and realistic. You never sugarcoat mistakes, offer generic platitudes, or provide empty praise. You hold the user to real-world business standards.
 
-The user (${name}) is at the ${level} level. They have just spoken for up to ${timeLimit} seconds in response to:
-"${prompt}"
-
-Their input mode was: ${mode === "scripted" ? "Read & speak (scripted reading)" : "Speak freely (own words)"}
-
-Evaluate across THREE dimensions, each 0–10:
+Evaluate the user's spoken response across THREE dimensions, each 0–10:
 1. CLARITY — structure, logical flow, lack of ambiguity.
 2. GRAMMAR — accuracy of English grammar, level-appropriate.
 3. CONFIDENCE — assertiveness, pace, filler words, professional tone.
 
 Scoring rubric:
-- Beginner: score generously, reward attempts.
-- Intermediate: score accurately, expect mostly correct grammar.
-- Advanced: score strictly, expect polished, executive-grade communication.
+- Beginner: Encourage attempts, but score honestly. Grammar errors should be flagged.
+- Intermediate: Score strictly. Expect mostly correct grammar, solid sentence structure, and clear flow. Do not pass if they hesitate excessively or make basic grammar mistakes.
+- Advanced: Score with executive-level rigor. Expect polished, persuasive, and structured business communication. Hesitations, filler words, or informal vocabulary should significantly drop the score.
 
-Return ONLY a JSON object matching this schema (no markdown, no prose):
+Return ONLY a JSON object matching this schema (no markdown, no prose, no backticks):
 {
   "transcript": "verbatim transcription of what was said",
   "scores": { "clarity": number, "grammar": number, "confidence": number },
-  "feedbackItems": [ { "type": "grammar|clarity|vocabulary|filler", "issue": "...", "fix": "..." } ],
-  "coachNote": "one warm paragraph, max 80 words, addressed to ${name}, referencing what they actually said.",
+  "feedbackItems": [ { "type": "grammar|clarity|vocabulary|filler", "issue": "issue desc (max 15 words)", "fix": "fix suggestion (max 15 words)" } ],
+  "coachNote": "addressed to the user by name, referencing what they said, max 60 words. State exactly what they did well, but be highly candid and direct about their main weakness. Avoid generic empty praise. If their scores are low, explain why they failed to meet the standard.",
   "passed": boolean
 }
 
 Rules:
-- feedbackItems: 1–4 entries, most important issues only.
+- feedbackItems: 1–4 entries, identifying actual issues and how to resolve them. Keep descriptions extremely concise (max 15 words each).
 - passed: true if all three scores >= 6.0.
-- coachNote MUST reference something specific they said and use the name "${name}".
-- If audio is too short or unclear, return transcript "[unclear]" with scores around 4 and a friendly coachNote asking ${name} to try again.`;
+- coachNote MUST be realistic, direct, and use the user's name. Max 60 words.
+- Avoid overly soft or positive platitudes like "Excellent response!" if the scores are mediocre (6.0 - 7.5) or failing (< 6.0). Be professional, constructive, and demanding.
+- If audio is too short or unclear, return transcript "[unclear]" with scores around 4 and a coachNote explaining that the speech could not be evaluated and asking the user to retry with clear delivery.`;
+}
+
+function buildUserPrompt(level: Level, prompt: string, mode: string, name: string, timeLimit: number) {
+  return `Evaluate the attached audio file.
+User Name: ${name}
+Target Level: ${level}
+Question Prompt: "${prompt}"
+Input Mode: ${mode === "scripted" ? "Read & speak (scripted reading)" : "Speak freely (own words)"}
+Time Limit: ${timeLimit} seconds`;
 }
 
 // ---------- Key pool ----------
@@ -103,7 +108,8 @@ export const analyzeSpeech = createServerFn({ method: "POST" })
     if (pool.length === 0)
       throw new Error("No Gemini API keys configured (set GEMINI_API_KEY or GEMINI_API_KEYS).");
 
-    const prompt = buildPrompt(
+    const systemPrompt = buildSystemInstruction();
+    const userPrompt = buildUserPrompt(
       data.level,
       data.questionPrompt,
       data.mode,
@@ -111,19 +117,24 @@ export const analyzeSpeech = createServerFn({ method: "POST" })
       data.timeLimitSeconds,
     );
     const body = {
+      systemInstruction: {
+        parts: [
+          { text: systemPrompt }
+        ]
+      },
       contents: [
         {
           role: "user",
           parts: [
             { inlineData: { mimeType: "audio/wav", data: data.audioBase64 } },
-            { text: prompt },
+            { text: userPrompt },
           ],
         },
       ],
       generationConfig: {
         responseMimeType: "application/json",
-        temperature: 0.2,
-        maxOutputTokens: 800,
+        temperature: 0.15,
+        maxOutputTokens: 600,
       },
     };
 
